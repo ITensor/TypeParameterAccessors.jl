@@ -10,7 +10,7 @@ using LinearAlgebra:
   UnitLowerTriangular,
   UnitUpperTriangular,
   UpperTriangular
-using NDTensors.TypeParameterAccessors:
+using TypeParameterAccessors:
   NDims,
   TypeParameter,
   is_wrapped_array,
