@@ -3,7 +3,7 @@ using Test: @testset
 @testset "TypeParameterAccessors custom types" begin
   @eval module $(gensym())
     using Test: @testset
-    using NDTensors.TypeParameterAccessors:
+    using TypeParameterAccessors:
       TypeParameterAccessors,
       Position,
       default_type_parameter,

@@ -1,6 +1,6 @@
 @eval module $(gensym())
 using Test: @test_throws, @testset
-using NDTensors.TypeParameterAccessors:
+using TypeParameterAccessors:
   TypeParameterAccessors,
   Position,
   TypeParameter,

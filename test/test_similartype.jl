@@ -1,7 +1,7 @@
 @eval module $(gensym())
 using Test: @test, @test_broken, @testset
 using LinearAlgebra: Adjoint, Diagonal
-using NDTensors.TypeParameterAccessors: NDims, similartype
+using TypeParameterAccessors: NDims, similartype
 @testset "TypeParameterAccessors similartype" begin
   @test similartype(Array, Float64, (2, 2)) == Matrix{Float64}
   @test similartype(Array) == Array
