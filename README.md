@@ -1,4 +1,4 @@
-# TypeParameterAccessors
+# TypeParameterAccessors.jl
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ITensor.github.io/TypeParameterAccessors.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://ITensor.github.io/TypeParameterAccessors.jl/dev/)
@@ -7,10 +7,23 @@
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-## Installation
+## Installation instructions
 
 ```julia
-julia> import Pkg
+julia> using Pkg: Pkg
 
 julia> Pkg.add("https://github.com/ITensor/TypeParameterAccessors.jl")
 ```
+
+## Examples
+
+````julia
+using TypeParameterAccessors: TypeParameterAccessors
+````
+
+Examples go here.
+
+---
+
+*This page was generated using [Literate.jl](https://github.com/fredrikekre/Literate.jl).*
+
