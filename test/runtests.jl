@@ -1,11 +1,11 @@
 @eval module $(gensym())
 using Test: @testset
+
 @testset "TypeParameterAccessors.jl" begin
-  include("test_aqua.jl")
-  include("test_basics.jl")
-  include("test_defaults.jl")
-  include("test_custom_types.jl")
-  include("test_wrappers.jl")
-  include("test_similartype.jl")
-end
+  filenames = filter(readdir(@__DIR__)) do f
+    startswith("test_")(f) && endswith(".jl")(f)
+  end
+  @testset "Test $filename" for filename in filenames
+    include(filename)
+  end
 end
