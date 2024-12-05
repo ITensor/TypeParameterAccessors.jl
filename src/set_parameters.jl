@@ -10,10 +10,10 @@ end
   param = parameter(param_type)
   return _set_type_parameter(type, pos, param)
 end
-function set_type_parameter(type::Type, pos, param)
+@inline function set_type_parameter(type::Type, pos, param)
   return set_type_parameter(type, position(type, pos), param)
 end
-function set_type_parameter(type::Type, pos::Position, param)
+@inline function set_type_parameter(type::Type, pos::Position, param)
   return set_type_parameter(type, pos, TypeParameter(param))
 end
 function set_type_parameter(type::Type, pos::Position, param::UnspecifiedTypeParameter)
@@ -28,19 +28,38 @@ function _set_type_parameters(type::Type, positions::Tuple{Vararg{Int}}, params:
   end
   return new_parameters(type, new_params)
 end
-@generated function set_type_parameters(
-  type_type::Type,
-  positions_type::Tuple{Vararg{Position}},
-  params_type::Tuple{Vararg{TypeParameter}},
-)
-  type = parameter(type_type)
-  positions = parameter.(parameters(positions_type))
-  params = parameter.(parameters(params_type))
-  return _set_type_parameters(type, positions, params)
+# @generated function set_type_parameters(
+#   type_type::Type,
+#   positions_type::Tuple{Vararg{Position}},
+#   params_type::Tuple{Vararg{TypeParameter}},
+# )
+#   type = parameter(type_type)
+#   positions = parameter.(parameters(positions_type))
+#   params = parameter.(parameters(params_type))
+#   ex = _set_type_parameters(type, positions, params)
+#   return quote
+#     $(Base.var"@inline")
+#     $ex
+#   end
+#   return _set_type_parameters(type, positions, params)
+# end
+
+function set_type_parameters(
+  type::Type, positions::Tuple{T1}, params::Tuple{T2}
+) where {T1,T2}
+  return set_type_parameter(type, positions[1], params[1])
 end
-function set_type_parameters(type::Type, positions::Tuple, params::Tuple)
-  return set_type_parameters(type, position.(type, positions), TypeParameter.(params))
+function set_type_parameters(
+  type::Type, positions::Tuple{T1,Vararg}, params::Tuple{T2,Vararg}
+) where {T1,T2}
+  pos, postail = positions[1], Base.tail(positions)
+  param, paramtail = params[1], Base.tail(params)
+  return set_type_parameters(set_type_parameter(type, pos, param), postail, paramtail)
 end
+
+# function set_type_parameters(type::Type, positions::Tuple, params::Tuple)
+#   return set_type_parameters(type, position.(type, positions), TypeParameter.(params))
+# end
 function set_type_parameters(type::Type, params::Tuple)
   return set_type_parameters(type, eachposition(type), params)
 end
