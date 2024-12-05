@@ -1,14 +1,14 @@
-type_parameter(param::TypeParameter) = parameter(typeof(param))
+@inline type_parameter(param::TypeParameter) = parameter(typeof(param))
 function type_parameter(param::UnspecifiedTypeParameter)
   return error("The requested type parameter isn't specified.")
 end
-function type_parameter(type::Type, pos)
+Base.@constprop :aggressive function type_parameter(type::Type, pos)
   return type_parameter(wrapped_type_parameter(type, pos))
 end
-function type_parameter(object, pos)
+@inline function type_parameter(object, pos)
   return type_parameter(typeof(object), pos)
 end
-function type_parameter(type_or_object)
+@inline function type_parameter(type_or_object)
   return only(type_parameters(type_or_object))
 end
 
