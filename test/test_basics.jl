@@ -1,4 +1,3 @@
-@eval module $(gensym())
 using Test: @test_throws, @testset
 using TypeParameterAccessors:
   TypeParameterAccessors,
@@ -81,5 +80,4 @@ include("utils/test_inferred.jl")
     @test_inferred type_parameters(a) == (Float32, 3)
     @test_inferred type_parameters(a, (2, eltype)) == (3, Float32) wrapped = true
   end
-end
 end

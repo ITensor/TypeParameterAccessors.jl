@@ -1,4 +1,3 @@
-@eval module $(gensym())
 using Test: @test_throws, @testset
 using TypeParameterAccessors:
   TypeParameterAccessors,
@@ -71,5 +70,4 @@ include("utils/test_inferred.jl")
     @test_inferred default_type_parameter(a, ndims) == 1
     @test_inferred default_type_parameters(a) == (Float64, 1)
   end
-end
 end
