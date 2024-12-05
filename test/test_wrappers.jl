@@ -1,4 +1,3 @@
-@eval module $(gensym())
 using Test: @test_broken, @testset
 using LinearAlgebra:
   Adjoint,
@@ -117,5 +116,4 @@ include("utils/test_inferred.jl")
     @test_inferred parenttype(wrapped_array) == Matrix{Float64}
     @test_inferred unwrap_array_type(wrapped_array_type) == Matrix{Float64}
   end
-end
 end
