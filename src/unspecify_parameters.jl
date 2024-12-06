@@ -8,7 +8,7 @@ end
 
 # Like `set_parameters` but less strict, i.e. it allows
 # setting with `TypeVar` while `set_parameters` would error.
-function new_parameters(type::Type, params)
+Base.@constprop :aggressive function new_parameters(type::Type, params)
   return to_unionall(unspecify_type_parameters(type){params...})
 end
 

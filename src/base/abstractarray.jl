@@ -62,7 +62,7 @@ end
   new_parenttype = set_eltype(parenttype(type), param)
   # Need to set both in one `set_type_parameters` call to avoid
   # conflicts in type parameter constraints of certain wrapper types.
-  return set_type_parameters(type, (eltype, parenttype), (param, new_parenttype))
+  return set_type_parameters(type, (eltype, parenttype), param, new_parenttype)
 end
 
 @traitfn function set_eltype(

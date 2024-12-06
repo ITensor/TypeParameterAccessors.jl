@@ -20,46 +20,40 @@ function set_type_parameter(type::Type, pos::Position, param::UnspecifiedTypePar
   return unspecify_type_parameter(type, pos)
 end
 
-function _set_type_parameters(type::Type, positions::Tuple{Vararg{Int}}, params::Tuple)
-  @assert length(positions) == length(params)
-  new_params = parameters(type)
-  for i in 1:length(positions)
-    new_params = Base.setindex(new_params, params[i], positions[i])
+Base.@constprop :aggressive function set_type_parameters(
+  type::Type, positions::Tuple, params...
+)
+  @inline
+  return __set_type_parameters(type, Val(positions), params...)
+end
+Base.@constprop :aggressive function set_type_parameters(type::Type, params::Tuple)
+  @inline
+  return set_type_parameters(type, ntuple(identity, length(params)), params...)
+end
+
+@generated function __set_type_parameters(
+  ::Type{type}, ::Val{positions}, params...
+) where {type,positions}
+
+  # collect all parameters and change out the specified ones
+  allparams = collect(Any, parameters(type))
+  for (i, _pos) in enumerate(positions)
+    pos = parameter(typeof(position(type, _pos)))
+    allparams[pos] = :(params[$i])
   end
-  return new_parameters(type, new_params)
-end
-# @generated function set_type_parameters(
-#   type_type::Type,
-#   positions_type::Tuple{Vararg{Position}},
-#   params_type::Tuple{Vararg{TypeParameter}},
-# )
-#   type = parameter(type_type)
-#   positions = parameter.(parameters(positions_type))
-#   params = parameter.(parameters(params_type))
-#   ex = _set_type_parameters(type, positions, params)
-#   return quote
-#     $(Base.var"@inline")
-#     $ex
-#   end
-#   return _set_type_parameters(type, positions, params)
-# end
 
-function set_type_parameters(
-  type::Type, positions::Tuple{T1}, params::Tuple{T2}
-) where {T1,T2}
-  return set_type_parameter(type, positions[1], params[1])
-end
-function set_type_parameters(
-  type::Type, positions::Tuple{T1,Vararg}, params::Tuple{T2,Vararg}
-) where {T1,T2}
-  pos, postail = positions[1], Base.tail(positions)
-  param, paramtail = params[1], Base.tail(params)
-  return set_type_parameters(set_type_parameter(type, pos, param), postail, paramtail)
-end
+  # wrap Symbols in QuoteNode to avoid them being interpolated
+  allparams = map(allparams) do p
+    p isa Symbol ? QuoteNode(p) : p
+  end
 
-# function set_type_parameters(type::Type, positions::Tuple, params::Tuple)
-#   return set_type_parameters(type, position.(type, positions), TypeParameter.(params))
-# end
-function set_type_parameters(type::Type, params::Tuple)
-  return set_type_parameters(type, eachposition(type), params)
+  # construct expression for new type
+  basetype = unspecify_type_parameters(type)
+  type_expr = Expr(:curly, basetype, allparams...)
+  for param in reverse(allparams)
+    if param isa TypeVar
+      type_expr = Expr(:call, :UnionAll, param, type_expr)
+    end
+  end
+  return :(@inline; $type_expr)
 end

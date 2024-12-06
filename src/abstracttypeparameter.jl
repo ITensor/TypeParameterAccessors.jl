@@ -6,6 +6,9 @@ abstract type AbstractTypeParameter end
 
 struct TypeParameter{Param} <: AbstractTypeParameter end
 @inline TypeParameter(param) = TypeParameter{param}()
+@inline function TypeParameter(::Type{T}) where {T}
+  return TypeParameter{T}()
+end
 @inline TypeParameter(param::TypeParameter) = param
 @inline AbstractTypeParameter(param) = TypeParameter(param)
 
