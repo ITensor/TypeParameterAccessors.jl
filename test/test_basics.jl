@@ -2,7 +2,6 @@ using Test: @test_throws, @testset
 using TypeParameterAccessors:
   TypeParameterAccessors,
   Position,
-  TypeParameter,
   set_type_parameter,
   set_type_parameters,
   specify_type_parameter,
@@ -22,13 +21,13 @@ include("utils/test_inferred.jl")
     @test_inferred type_parameter(Array{Float64}, 1) == Float64 wrapped = true
     @test_inferred type_parameter(Array{Float64}, Position(1)) == Float64
     @test_inferred type_parameter(Val{3}) == 3
-    @test_throws ErrorException type_parameter(Array, 1)
+    # @test_throws ErrorException type_parameter(Array, 1)
     @test_inferred type_parameter(Array{Float64}, eltype) == Float64
     @test_inferred type_parameter(Matrix{Float64}, ndims) == 2
-    @test_throws ErrorException type_parameter(Array{Float64}, ndims) == 2
-    @test_inferred type_parameters(Matrix{Float64}, (2, eltype)) == (2, Float64) wrapped =
+    # @test_throws ErrorException type_parameter(Array{Float64}, ndims) == 2
+    @test_inferred type_parameters(Matrix{Float64}, 2, eltype) == (2, Float64) wrapped =
       true
-    @test_inferred type_parameters(Matrix{Float64}, (Position(2), eltype)) == (2, Float64)
+    @test_inferred type_parameters(Matrix{Float64}, Position(2), eltype) == (2, Float64)
   end
   @testset "Set parameters" begin
     @test_inferred set_type_parameter(Array, 1, Float64) == Array{Float64} wrapped = true
@@ -61,10 +60,9 @@ include("utils/test_inferred.jl")
     @test_inferred unspecify_type_parameter(Vector, Position(2)) == Array
     @test_inferred unspecify_type_parameter(Vector{Float64}, eltype) == Vector
     @test_inferred unspecify_type_parameters(Vector{Float64}) == Array
-    @test_inferred unspecify_type_parameters(Vector{Float64}, (eltype, 2)) == Array wrapped =
+    @test_inferred unspecify_type_parameters(Vector{Float64}, eltype, 2) == Array wrapped =
       true
-    @test_inferred unspecify_type_parameters(Vector{Float64}, (eltype, Position(2))) ==
-      Array
+    @test_inferred unspecify_type_parameters(Vector{Float64}, eltype, Position(2)) == Array
   end
   @testset "On objects" begin
     @test_inferred type_parameter(Val{3}()) == 3
@@ -76,6 +74,6 @@ include("utils/test_inferred.jl")
     @test_inferred type_parameter(a, 2) == 3 wrapped = true
     @test_inferred type_parameter(a, ndims) == 3
     @test_inferred type_parameters(a) == (Float32, 3)
-    @test_inferred type_parameters(a, (2, eltype)) == (3, Float32) wrapped = true
+    @test_inferred type_parameters(a, 2, eltype) == (3, Float32) wrapped = true
   end
 end

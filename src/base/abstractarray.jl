@@ -1,6 +1,8 @@
 struct Self end
+position(a, ::Self) = Position(0)
+position(::Type{T}, ::Self) where {T} = Position(0)
 
-parameter(type::Type, pos::Self) = type
+type_parameter(type::Type, pos::Self) = type
 function set_type_parameter(type::Type, pos::Self, param)
   return error("Can't set the parent type of an unwrapped array type.")
 end
@@ -27,7 +29,7 @@ using SimpleTraits: SimpleTraits, @traitdef, @traitimpl
 @traitimpl IsWrappedArray{ArrayType} <- is_wrapped_array(ArrayType)
 #! format: on
 
-parenttype(type::Type{<:AbstractArray}) = parameter(type, parenttype)
+parenttype(type::Type{<:AbstractArray}) = type_parameter(type, parenttype)
 parenttype(object::AbstractArray) = parenttype(typeof(object))
 position(::Type{<:AbstractArray}, ::typeof(parenttype)) = Self()
 
