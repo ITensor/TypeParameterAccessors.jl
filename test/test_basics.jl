@@ -35,27 +35,25 @@ include("utils/test_inferred.jl")
     @test_inferred set_type_parameter(Array, Position(1), Float64) == Array{Float64}
     @test_inferred set_type_parameter(Array, 2, 2) == Matrix wrapped = true
     @test_inferred set_type_parameter(Array, eltype, Float32) == Array{Float32}
-    @test_inferred set_type_parameters(
-      Array, (eltype, Position(2)), (TypeParameter(Float32), TypeParameter(3))
-    ) == Array{Float32,3}
-    @test_inferred set_type_parameters(Array, (eltype, 2), (Float32, 3)) == Array{Float32,3} wrapped =
+    @test_inferred set_type_parameters(Array, (eltype, Position(2)), Float32, 3) ==
+      Array{Float32,3} wrapped = true
+    @test_inferred set_type_parameters(Array, (eltype, 2), Float32, 3) == Array{Float32,3} wrapped =
       true
 
     # TODO: This should infer without wrapping but doesn't.
-    @test_inferred set_type_parameters(
-      Array, (eltype, Position(2)), (Float32, TypeParameter(3))
-    ) == Array{Float32,3} wrapped = true
+    @test_inferred set_type_parameters(Array, (eltype, Position(2)), Float32, 3) ==
+      Array{Float32,3} wrapped = true
   end
   @testset "Specify parameters" begin
     @test_inferred specify_type_parameter(Array, 1, Float64) == Array{Float64} wrapped =
       true
     @test_inferred specify_type_parameter(Array, Position(1), Float64) == Array{Float64}
-    @test_inferred specify_type_parameters(Matrix, (2, 1), (4, Float32)) == Matrix{Float32} wrapped =
+    @test_inferred specify_type_parameters(Matrix, (2, 1), 4, Float32) == Matrix{Float32} wrapped =
       true
     @test_inferred specify_type_parameters(Array, (Float64, 2)) == Matrix{Float64} wrapped =
       true
     @test_inferred specify_type_parameter(Array, eltype, Float32) == Array{Float32}
-    @test_inferred specify_type_parameters(Array, (eltype, 2), (Float32, 3)) ==
+    @test_inferred specify_type_parameters(Array, (eltype, 2), Float32, 3) ==
       Array{Float32,3} wrapped = true
   end
   @testset "Unspecify parameters" begin
