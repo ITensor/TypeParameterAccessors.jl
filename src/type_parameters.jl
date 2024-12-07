@@ -24,15 +24,11 @@ in addition to the standard `type_parameter(MyType(...), 1)` or `type_parameter(
 """
 function position end
 
-position(object, name) = position(typeof(object), name)
+@inline position(object, name) = position(typeof(object), name)
 @inline position(::Type, pos::Int) = Position(pos)
 @inline position(::Type, pos::Position) = pos
 position(type::Type, pos) = throw(MethodError(position, (type, pos)))
 
-# Base.@constprop :aggressive function positions(::Type{T}, pos::Tuple) where {T}
-#   @inline
-#   return ntuple(i -> position(T, pos[i]), Val(length(pos)))
-# end
 @generated function positions(::Type{T}, pos::Tuple) where {T}
   ex = Expr(:tuple)
   for i in 1:nparameters(pos)
@@ -63,9 +59,6 @@ end
 Base.@constprop :aggressive type_parameter(t, pos...) = (
   @inline; type_parameters(t, pos...)[1]
 )
-# @inline type_parameter(t) = type_parameter(t, Position(1))
-# @inline type_parameter(t, pos) = type_parameter(typeof(t), pos)
-# @inline type_parameter(::Type{T}, pos) where {T} = only(type_parameters(T, (pos,)))
 
 """
   nparameters(type_or_obj)
@@ -209,23 +202,3 @@ end
 function specify_default_type_parameter(::Type{T}, pos) where {T}
   return specify_default_type_parameters(T, pos)
 end
-
-#
-#
-# @inline type_parameter(param::TypeParameter) = parameter(typeof(param))
-# function type_parameter(param::UnspecifiedTypeParameter)
-#   return error("The requested type parameter isn't specified.")
-# end
-# Base.@constprop :aggressive function type_parameter(type::Type, pos)
-#   return type_parameter(wrapped_type_parameter(type, pos))
-# end
-# @inline function type_parameter(object, pos)
-#   return type_parameter(typeof(object), pos)
-# end
-# @inline function type_parameter(type_or_object)
-#   return only(type_parameters(type_or_object))
-# end
-#
-# function type_parameters(type_or_object, positions=eachposition(type_or_object))
-#   return map(pos -> type_parameter(type_or_object, pos), positions)
-# end
