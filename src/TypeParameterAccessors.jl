@@ -1,5 +1,8 @@
 module TypeParameterAccessors
 
+# Imports
+using SimpleTraits: SimpleTraits, @traitdef, @traitimpl
+
 include("type_utils.jl")
 include("type_parameters.jl")
 

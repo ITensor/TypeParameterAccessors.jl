@@ -19,8 +19,6 @@ function set_ndims(type::Type{<:AbstractArray}, param::NDims)
   return set_type_parameter(type, ndims, ndims(param))
 end
 
-using SimpleTraits: SimpleTraits, @traitdef, @traitimpl
-
 # Trait indicating if the AbstractArray type is an array wrapper.
 # Assumes that it implements `NDTensors.parenttype`.
 @traitdef IsWrappedArray{ArrayType}
@@ -78,6 +76,8 @@ end
 # but it may not be correct, but it is very convenient
 # to define this to make more operations "just work"
 # on most AbstractArrays.
+# TODO: evaluate if this is actually the case, and weigh up the benefits of ease of use
+# against not having a helpful error thrown
 position(type::Type{<:AbstractArray}, ::typeof(eltype)) = Position(1)
 position(type::Type{<:AbstractArray}, ::typeof(ndims)) = Position(2)
 
