@@ -1,5 +1,15 @@
 module TypeParameterAccessors
 
+# Exports
+export type_parameter, type_parameters
+export nparameters, is_parameter_specified
+export default_type_parameter, default_type_parameters
+export set_type_parameter, set_type_parameters
+export set_default_type_parameter, set_default_type_parameters
+export specify_type_parameter, specify_type_parameters
+export specify_default_type_parameter, specify_default_type_parameters
+export unspecify_type_parameter, unspecify_type_parameters
+
 # Imports
 using SimpleTraits: SimpleTraits, @traitdef, @traitimpl
 
