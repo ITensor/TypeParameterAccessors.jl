@@ -9,6 +9,5 @@ include("base/abstractarray.jl")
 include("base/similartype.jl")
 include("base/array.jl")
 include("base/linearalgebra.jl")
-include("base/stridedviews.jl")
 
 end
