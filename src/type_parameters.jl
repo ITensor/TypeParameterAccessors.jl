@@ -24,17 +24,15 @@ in addition to the standard `type_parameter(MyType(...), 1)` or `type_parameter(
 """
 function position end
 
-@inline position(object, name) = position(typeof(object), name)
-@inline position(::Type, pos::Int) = Position(pos)
-@inline position(::Type, pos::Position) = pos
+position(object, name) = position(typeof(object), name)
+position(::Type, pos::Int) = Position(pos)
+position(::Type, pos::Position) = pos
 position(type::Type, pos) = throw(MethodError(position, (type, pos)))
 
-@generated function positions(::Type{T}, pos::Tuple) where {T}
-  ex = Expr(:tuple)
-  for i in 1:nparameters(pos)
-    push!(ex.args, :(position(T, pos[$(i)])))
+function positions(::Type{T}, pos::Tuple) where {T}
+  return ntuple(length(pos)) do i
+    return position(T, pos[i])
   end
-  return :(@inline; $ex)
 end
 
 """
@@ -56,9 +54,7 @@ end
   return :(($((wrap_symbol_quotenode(allparams[Int(p) + 1]) for p in pos)...),))
 end
 
-Base.@constprop :aggressive type_parameter(t, pos...) = (
-  @inline; type_parameters(t, pos...)[1]
-)
+@inline type_parameter(t, pos...) = type_parameters(t, pos...)[1]
 
 """
   nparameters(type_or_obj)
