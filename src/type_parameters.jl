@@ -43,7 +43,13 @@ Optionally you can specify a position to just get the parameter for that positio
 """
 function type_parameters end
 
-@inline type_parameters(::Type{T}) where {T} = Tuple(Base.unwrap_unionall(T).parameters)
+# This implementation is type-stable in 1.11, but not in 1.10.
+# Attempts with `Base.@constprop :aggressive` failed, so generated function instead
+# @inline type_parameters(::Type{T}) where {T} = Tuple(Base.unwrap_unionall(T).parameters)
+@generated function type_parameters(::Type{T}) where {T}
+  params = wrap_symbol_quotenode.(Tuple(Base.unwrap_unionall(T).parameters))
+  return :(@inline; ($(params...),))
+end
 @inline type_parameters(::Type{T}, pos) where {T} = type_parameters(T, position(T, pos))
 @inline type_parameters(::Type{T}, ::Position{p}) where {T,p} = type_parameters(T)[p]
 @inline type_parameters(::Type{T}, ::Position{0}) where {T} = T
