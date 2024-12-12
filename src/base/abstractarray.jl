@@ -2,7 +2,6 @@ struct Self end
 position(a, ::Self) = Position(0)
 position(::Type{T}, ::Self) where {T} = Position(0)
 
-type_parameter(type::Type, pos::Self) = type
 function set_type_parameter(type::Type, pos::Self, param)
   return error("Can't set the parent type of an unwrapped array type.")
 end
@@ -27,7 +26,7 @@ end
 @traitimpl IsWrappedArray{ArrayType} <- is_wrapped_array(ArrayType)
 #! format: on
 
-parenttype(type::Type{<:AbstractArray}) = type_parameter(type, parenttype)
+parenttype(type::Type{<:AbstractArray}) = type_parameters(type, parenttype)
 parenttype(object::AbstractArray) = parenttype(typeof(object))
 position(::Type{<:AbstractArray}, ::typeof(parenttype)) = Self()
 
@@ -62,7 +61,7 @@ end
   new_parenttype = set_eltype(parenttype(type), param)
   # Need to set both in one `set_type_parameters` call to avoid
   # conflicts in type parameter constraints of certain wrapper types.
-  return set_type_parameters(type, (eltype, parenttype), param, new_parenttype)
+  return set_type_parameters(type, (eltype, parenttype), (param, new_parenttype))
 end
 
 @traitfn function set_eltype(
