@@ -34,7 +34,7 @@ julia> Pkg.add("TypeParameterAccessors")
 ````julia
 using Test: @test
 using TypeParameterAccessors:
-  default_type_parameter,
+  type_parameters,
   default_type_parameters,
   set_default_type_parameter,
   set_default_type_parameters,
@@ -44,8 +44,6 @@ using TypeParameterAccessors:
   specify_default_type_parameters,
   specify_type_parameter,
   specify_type_parameters,
-  type_parameter,
-  type_parameters,
   unspecify_type_parameter,
   unspecify_type_parameters
 ````
@@ -53,20 +51,19 @@ using TypeParameterAccessors:
 Getting type parameters
 
 ````julia
-@test type_parameters(Array{Float64}, (1,)) == (Float64,)
-@test type_parameter(Array{Float64}, 1) == Float64
-@test type_parameters(Matrix{Float64}, (2,)) == (2,)
-@test type_parameters(Matrix{Float64}, (1, 2)) == (Float64, 2)
-@test type_parameters(Array{Float64}, (eltype,)) == (Float64,)
-@test type_parameters(Matrix{Float64}, (ndims,)) == (2,)
-@test type_parameters(Matrix{Float64}, (eltype, ndims)) == (Float64, 2)
+@test type_parameters(Array{Float64}, 1) == Float64
+@test type_parameters(Matrix{Float64}, 2) == 2
+@test type_parameters(Matrix{Float64}) == (Float64, 2)
+@test type_parameters(Array{Float64}, eltype) == Float64
+@test type_parameters(Matrix{Float64}, ndims) == 2
+@test type_parameters.(Matrix{Float64}, (eltype, ndims)) == (Float64, 2)
 ````
 
 Setting type parameters
 
 ````julia
-@test set_type_parameters(Array, (1,), (Float32,)) == Array{Float32}
 @test set_type_parameter(Array, 1, Float32) == Array{Float32}
+@test set_type_parameters(Array, (1,), (Float32,)) == Array{Float32}
 @test set_type_parameters(Array, (1, 2), (Float32, 2)) == Matrix{Float32}
 @test set_type_parameters(Array, (eltype,), (Float32,)) == Array{Float32}
 @test set_type_parameters(Array, (eltype, ndims), (Float32, 2)) == Matrix{Float32}
@@ -94,8 +91,8 @@ Getting default type parameters
 
 ````julia
 @test default_type_parameters(Array) == (Float64, 1)
-@test default_type_parameters(Array, (eltype,)) == (Float64,)
-@test default_type_parameter(Array, 2) == 1
+@test default_type_parameters(Array, eltype) == Float64
+@test default_type_parameters(Array, 2) == 1
 ````
 
 Setting default type parameters
