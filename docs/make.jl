@@ -17,8 +17,6 @@ makedocs(;
     assets=String[],
   ),
   pages=["Home" => "index.md"],
-  # TODO: Define missing docs and delete this.
-  warnonly=[:missing_docs],
 )
 
 deploydocs(;
