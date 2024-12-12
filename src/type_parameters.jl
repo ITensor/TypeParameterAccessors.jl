@@ -19,8 +19,8 @@ An optional interface function. Defining this allows accessing a parameter
 at the defined position using the `position_name`.
 
 For example, defining `TypeParameterAccessors.position(::Type{<:MyType}, ::typeof(eltype)) = Position(1)`
-allows accessing the first type parameter with `type_parameter(MyType(...), eltype)`,
-in addition to the standard `type_parameter(MyType(...), 1)` or `type_parameter(MyType(...), Position(1))`.
+allows accessing the first type parameter with `type_parameters(MyType(...), eltype)`,
+in addition to the standard `type_parameters(MyType(...), 1)` or `type_parameters(MyType(...), Position(1))`.
 """
 function position end
 
@@ -173,6 +173,7 @@ default_type_parameters(t, pos) = default_type_parameters(typeof(t), pos)
 """
   set_default_type_parameters(type::Type, positions)
 
+Set the type parameters at the given positions to their default values.
 """
 function set_default_type_parameters(::Type{T}, pos::Tuple) where {T}
   return set_type_parameters(T, pos, default_type_parameters.(T, pos))
@@ -188,6 +189,8 @@ end
 """
   specify_default_type_parameters(type::Type, positions)
 
+Set the type parameters at the given positions to their default values, if they
+had not been specified.
 """
 function specify_default_type_parameters(::Type{T}, pos::Tuple) where {T}
   return specify_type_parameters(T, pos, default_type_parameters.(T, pos))
