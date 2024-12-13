@@ -29,20 +29,12 @@ default_type_parameters
 nparameters
 is_parameter_specified
 unspecify_type_parameters
-unspecify_type_parameter
 set_type_parameters
-set_type_parameter
 set_default_type_parameters
-set_default_type_parameter
 specify_type_parameters
-specify_type_parameter
 specify_default_type_parameters
-specify_default_type_parameter
 ```
 
 ## `Array`-type tools
 
-```@docs
-
-```
 
