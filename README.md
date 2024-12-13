@@ -33,19 +33,7 @@ julia> Pkg.add("TypeParameterAccessors")
 
 ````julia
 using Test: @test
-using TypeParameterAccessors:
-  type_parameters,
-  default_type_parameters,
-  set_default_type_parameter,
-  set_default_type_parameters,
-  set_type_parameter,
-  set_type_parameters,
-  specify_default_type_parameter,
-  specify_default_type_parameters,
-  specify_type_parameter,
-  specify_type_parameters,
-  unspecify_type_parameter,
-  unspecify_type_parameters
+using TypeParameterAccessors
 ````
 
 Getting type parameters
@@ -62,7 +50,7 @@ Getting type parameters
 Setting type parameters
 
 ````julia
-@test set_type_parameter(Array, 1, Float32) == Array{Float32}
+@test set_type_parameters(Array, 1, Float32) == Array{Float32}
 @test set_type_parameters(Array, (1,), (Float32,)) == Array{Float32}
 @test set_type_parameters(Array, (1, 2), (Float32, 2)) == Matrix{Float32}
 @test set_type_parameters(Array, (eltype,), (Float32,)) == Array{Float32}
@@ -74,15 +62,15 @@ Specifying type parameters
 ````julia
 @test specify_type_parameters(Array{Float64}, (eltype, ndims), (Float32, 2)) ==
   Matrix{Float64}
-@test specify_type_parameter(Array{Float64}, ndims, 2) == Matrix{Float64}
-@test specify_type_parameter(Array{Float64}, eltype, Float32) == Array{Float64}
+@test specify_type_parameters(Array{Float64}, ndims, 2) == Matrix{Float64}
+@test specify_type_parameters(Array{Float64}, eltype, Float32) == Array{Float64}
 ````
 
 Unspecifying type parameters
 
 ````julia
 @test unspecify_type_parameters(Matrix{Float32}) == Array
-@test unspecify_type_parameter(Matrix{Float32}, 1) == Matrix
+@test unspecify_type_parameters(Matrix{Float32}, 1) == Matrix
 @test unspecify_type_parameters(Matrix{Float32}, (eltype,)) == Matrix
 @test unspecify_type_parameters(Matrix{Float32}, (ndims,)) == Array{Float32}
 ````
@@ -100,14 +88,14 @@ Setting default type parameters
 ````julia
 @test set_default_type_parameters(Array) == Vector{Float64}
 @test set_default_type_parameters(Array, (eltype,)) == Array{Float64}
-@test set_default_type_parameter(Array, 2) == Vector
+@test set_default_type_parameters(Array, 2) == Vector
 ````
 
 Specifying default type parameters
 
 ````julia
 @test specify_default_type_parameters(Matrix, (eltype, ndims)) == Matrix{Float64}
-@test specify_default_type_parameter(Matrix, eltype) == Matrix{Float64}
+@test specify_default_type_parameters(Matrix, eltype) == Matrix{Float64}
 @test specify_default_type_parameters(Array{Float32}, (eltype, ndims)) == Vector{Float32}
 ````
 
