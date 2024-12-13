@@ -71,11 +71,6 @@ Return whether or not the type parameter at a given position is considered speci
 """
 is_parameter_specified(::Type{T}, pos) where {T} = !(type_parameters(T, pos) isa TypeVar)
 
-"""
-  unspecify_type_parameters(type::Type, [positions::Tuple])
-
-Return a new type where the type parameters at the given positions are unset.
-"""
 unspecify_type_parameters(::Type{T}) where {T} = Base.typename(T).wrapper
 function unspecify_type_parameters(::Type{T}, pos::Tuple) where {T}
   @inline
@@ -95,10 +90,13 @@ end
 unspecify_type_parameter(::Type{T}, pos) where {T} = unspecify_type_parameters(T, (pos,))
 
 """
-  set_type_parameters(type::Type, positions::Tuple, parameters::Tuple)
+  unspecify_type_parameters(type::Type, [positions::Tuple])
+  unspecify_type_parameter(type::Type, position)
 
-Return a new type where the type parameters at the given positions are set to the provided values.
+Return a new type where the type parameters at the given positions are unset.
 """
+unspecify_type_parameters, unspecify_type_parameter
+
 function set_type_parameters(
   ::Type{T}, pos::Tuple{Vararg{Any,N}}, parameters::Tuple{Vararg{Any,N}}
 ) where {T,N}
@@ -121,11 +119,13 @@ function set_type_parameter(::Type{T}, pos, param) where {T}
 end
 
 """
-  specify_type_parameters(type::Type, positions::Tuple, parameters::Tuple)
+  set_type_parameters(type::Type, positions::Tuple, parameters::Tuple)
+  set_type_parameter(type::Type, position, parameter)
 
-Return a new type where the type parameters at the given positions are set to the provided values,
-only if they were previously unspecified.
+Return a new type where the type parameters at the given positions are set to the provided values.
 """
+set_type_parameters, set_type_parameter
+
 function specify_type_parameters(
   ::Type{T}, pos::Tuple{Vararg{Any,N}}, parameters::Tuple{Vararg{Any,N}}
 ) where {T,N}
@@ -153,6 +153,15 @@ function specify_type_parameter(::Type{T}, pos, param) where {T}
 end
 
 """
+  specify_type_parameters(type::Type, positions::Tuple, parameters::Tuple)
+  specify_type_parameter(type::Type, position, parameter)
+
+Return a new type where the type parameters at the given positions are set to the provided values,
+only if they were previously unspecified.
+"""
+specify_type_parameters, specify_type_parameter
+
+"""
   default_type_parameters(type::Type)::Tuple
 
 An optional interface function. Defining this allows filling type parameters
@@ -170,11 +179,6 @@ end
 default_type_parameters(t) = default_type_parameters(typeof(t))
 default_type_parameters(t, pos) = default_type_parameters(typeof(t), pos)
 
-"""
-  set_default_type_parameters(type::Type, positions)
-
-Set the type parameters at the given positions to their default values.
-"""
 function set_default_type_parameters(::Type{T}, pos::Tuple) where {T}
   return set_type_parameters(T, pos, default_type_parameters.(T, pos))
 end
@@ -187,11 +191,13 @@ function set_default_type_parameter(::Type{T}, pos) where {T}
 end
 
 """
-  specify_default_type_parameters(type::Type, positions)
+  set_default_type_parameters(type::Type, [positions])
+  set_default_type_parameter(type::Type, position)
 
-Set the type parameters at the given positions to their default values, if they
-had not been specified.
+Set the type parameters at the given positions to their default values.
 """
+set_default_type_parameters, set_default_type_parameter
+
 function specify_default_type_parameters(::Type{T}, pos::Tuple) where {T}
   return specify_type_parameters(T, pos, default_type_parameters.(T, pos))
 end
@@ -202,3 +208,12 @@ end
 function specify_default_type_parameter(::Type{T}, pos) where {T}
   return specify_default_type_parameters(T, (pos,))
 end
+
+"""
+  specify_default_type_parameters(type::Type, [positions])
+  specify_default_type_parameter(type::Type, position)
+
+Set the type parameters at the given positions to their default values, if they
+had not been specified.
+"""
+specify_default_type_parameters, specify_default_type_parameter
