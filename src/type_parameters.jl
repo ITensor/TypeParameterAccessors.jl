@@ -89,8 +89,8 @@ end
   for pos in type_parameters(positions)
     allparams[pos] = type_parameters(unspecify_type_parameters(T), Int(pos))
   end
-  type_ex = construct_type_ex(T, allparams)
-  return :(@inline; $type_ex)
+  type_expr = construct_type_expr(T, allparams)
+  return :(@inline; $type_expr)
 end
 unspecify_type_parameters(::Type{T}, pos) where {T} = unspecify_type_parameters(T, (pos,))
 
@@ -113,8 +113,8 @@ end
   for (i, pos) in enumerate(type_parameters(positions))
     allparams[pos] = :(params[$i])
   end
-  type_ex = construct_type_ex(T, allparams)
-  return :(@inline; $type_ex)
+  type_expr = construct_type_expr(T, allparams)
+  return :(@inline; $type_expr)
 end
 function set_type_parameters(::Type{T}, pos, param) where {T}
   return set_type_parameters(T, (pos,), (param,))
@@ -145,8 +145,8 @@ end
       allparams[pos] = :(params[$i])
     end
   end
-  type_ex = construct_type_ex(T, allparams)
-  return :(@inline; $type_ex)
+  type_expr = construct_type_expr(T, allparams)
+  return :(@inline; $type_expr)
 end
 function specify_type_parameters(::Type{T}, pos, param) where {T}
   return specify_type_parameters(T, (pos,), (param,))
