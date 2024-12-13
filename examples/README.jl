@@ -57,7 +57,7 @@ using TypeParameterAccessors
 
 # Specifying type parameters
 @test specify_type_parameters(Array{Float64}, (eltype, ndims), (Float32, 2)) ==
-      Matrix{Float64}
+  Matrix{Float64}
 @test specify_type_parameters(Array{Float64}, ndims, 2) == Matrix{Float64}
 @test specify_type_parameters(Array{Float64}, eltype, Float32) == Array{Float64}
 
