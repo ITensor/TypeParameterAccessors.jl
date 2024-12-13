@@ -1,7 +1,8 @@
 struct Self end
+position(a, ::Self) = Position(0)
+position(::Type{T}, ::Self) where {T} = Position(0)
 
-parameter(type::Type, pos::Self) = type
-function set_type_parameter(type::Type, pos::Self, param)
+function set_type_parameters(type::Type, ::Self, param)
   return error("Can't set the parent type of an unwrapped array type.")
 end
 
@@ -11,13 +12,11 @@ end
 
 ## This will fail if position of `ndims` is not defined for `type`
 function set_ndims(type::Type{<:AbstractArray}, param)
-  return set_type_parameter(type, ndims, param)
+  return set_type_parameters(type, ndims, param)
 end
 function set_ndims(type::Type{<:AbstractArray}, param::NDims)
-  return set_type_parameter(type, ndims, ndims(param))
+  return set_type_parameters(type, ndims, ndims(param))
 end
-
-using SimpleTraits: SimpleTraits, @traitdef, @traitimpl
 
 # Trait indicating if the AbstractArray type is an array wrapper.
 # Assumes that it implements `NDTensors.parenttype`.
@@ -27,7 +26,7 @@ using SimpleTraits: SimpleTraits, @traitdef, @traitimpl
 @traitimpl IsWrappedArray{ArrayType} <- is_wrapped_array(ArrayType)
 #! format: on
 
-parenttype(type::Type{<:AbstractArray}) = parameter(type, parenttype)
+parenttype(type::Type{<:AbstractArray}) = type_parameters(type, parenttype)
 parenttype(object::AbstractArray) = parenttype(typeof(object))
 position(::Type{<:AbstractArray}, ::typeof(parenttype)) = Self()
 
@@ -53,7 +52,7 @@ end
 unwrap_array_type(array::AbstractArray) = unwrap_array_type(typeof(array))
 
 function set_parenttype(t::Type, param)
-  return set_type_parameter(t, parenttype, param)
+  return set_type_parameters(t, parenttype, param)
 end
 
 @traitfn function set_eltype(
@@ -68,7 +67,7 @@ end
 @traitfn function set_eltype(
   type::Type{ArrayType}, param
 ) where {ArrayType <: AbstractArray; !IsWrappedArray{ArrayType}}
-  return set_type_parameter(type, eltype, param)
+  return set_type_parameters(type, eltype, param)
 end
 
 # These are generic fallback definitions. By convention,
@@ -76,6 +75,8 @@ end
 # but it may not be correct, but it is very convenient
 # to define this to make more operations "just work"
 # on most AbstractArrays.
+# TODO: evaluate if this is actually the case, and weigh up the benefits of ease of use
+# against not having a helpful error thrown
 position(type::Type{<:AbstractArray}, ::typeof(eltype)) = Position(1)
 position(type::Type{<:AbstractArray}, ::typeof(ndims)) = Position(2)
 
