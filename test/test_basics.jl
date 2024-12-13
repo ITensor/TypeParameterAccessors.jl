@@ -1,13 +1,7 @@
 using Test: @test_throws, @testset
 using TestExtras: @constinferred
 using TypeParameterAccessors:
-  set_type_parameter,
-  set_type_parameters,
-  specify_type_parameter,
-  specify_type_parameters,
-  type_parameters,
-  unspecify_type_parameter,
-  unspecify_type_parameters
+  set_type_parameters, specify_type_parameters, type_parameters, unspecify_type_parameters
 
 @testset "Get parameters" begin
   @test @constinferred(type_parameters($(AbstractArray{Float64}), 1)) == Float64
@@ -26,26 +20,26 @@ using TypeParameterAccessors:
 end
 
 @testset "Set parameters" begin
-  @test @constinferred(set_type_parameter($Array, 1, $Float64)) == Array{Float64}
-  @test @constinferred(set_type_parameter($Array, 2, 2)) == Matrix
-  @test @constinferred(set_type_parameter($Array, $eltype, $Float32)) == Array{Float32}
+  @test @constinferred(set_type_parameters($Array, 1, $Float64)) == Array{Float64}
+  @test @constinferred(set_type_parameters($Array, 2, 2)) == Matrix
+  @test @constinferred(set_type_parameters($Array, $eltype, $Float32)) == Array{Float32}
   @test @constinferred(set_type_parameters($Array, $((eltype, 2)), $((Float32, 3)))) ==
     Array{Float32,3}
 end
 
 @testset "Specify parameters" begin
-  @test @constinferred(specify_type_parameter($Array, 1, $Float64)) == Array{Float64}
+  @test @constinferred(specify_type_parameters($Array, 1, $Float64)) == Array{Float64}
   @test @constinferred(specify_type_parameters($Matrix, $((2, 1)), $((4, Float32)))) ==
     Matrix{Float32}
   @test @constinferred(specify_type_parameters($Array, $((Float64, 2)))) == Matrix{Float64}
-  @test @constinferred(specify_type_parameter($Array, $eltype, $Float32)) == Array{Float32}
+  @test @constinferred(specify_type_parameters($Array, $eltype, $Float32)) == Array{Float32}
   @test @constinferred(specify_type_parameters($Array, $((eltype, 2)), $((Float32, 3)))) ==
     Array{Float32,3}
 end
 
 @testset "Unspecify parameters" begin
-  @test @constinferred(unspecify_type_parameter($Vector, 2)) == Array
-  @test @constinferred(unspecify_type_parameter($(Vector{Float64}), eltype)) == Vector
+  @test @constinferred(unspecify_type_parameters($Vector, 2)) == Array
+  @test @constinferred(unspecify_type_parameters($(Vector{Float64}), eltype)) == Vector
   @test @constinferred(unspecify_type_parameters($(Vector{Float64}))) == Array
   @test @constinferred(unspecify_type_parameters($(Vector{Float64}), $((eltype, 2)))) ==
     Array

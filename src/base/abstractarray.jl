@@ -2,7 +2,7 @@ struct Self end
 position(a, ::Self) = Position(0)
 position(::Type{T}, ::Self) where {T} = Position(0)
 
-function set_type_parameter(type::Type, pos::Self, param)
+function set_type_parameters(type::Type, ::Self, param)
   return error("Can't set the parent type of an unwrapped array type.")
 end
 
@@ -12,10 +12,10 @@ end
 
 ## This will fail if position of `ndims` is not defined for `type`
 function set_ndims(type::Type{<:AbstractArray}, param)
-  return set_type_parameter(type, ndims, param)
+  return set_type_parameters(type, ndims, param)
 end
 function set_ndims(type::Type{<:AbstractArray}, param::NDims)
-  return set_type_parameter(type, ndims, ndims(param))
+  return set_type_parameters(type, ndims, ndims(param))
 end
 
 # Trait indicating if the AbstractArray type is an array wrapper.
@@ -52,7 +52,7 @@ end
 unwrap_array_type(array::AbstractArray) = unwrap_array_type(typeof(array))
 
 function set_parenttype(t::Type, param)
-  return set_type_parameter(t, parenttype, param)
+  return set_type_parameters(t, parenttype, param)
 end
 
 @traitfn function set_eltype(
@@ -67,7 +67,7 @@ end
 @traitfn function set_eltype(
   type::Type{ArrayType}, param
 ) where {ArrayType <: AbstractArray; !IsWrappedArray{ArrayType}}
-  return set_type_parameter(type, eltype, param)
+  return set_type_parameters(type, eltype, param)
 end
 
 # These are generic fallback definitions. By convention,

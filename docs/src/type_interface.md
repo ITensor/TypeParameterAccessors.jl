@@ -68,7 +68,7 @@ In a similar manner, it is also possible to alter the type parameters of a given
 That functionality is provided by [`set_type_parameters`](@ref):
 
 ```@repl type_parameters
-set_type_parameter(Foo{1,2,3}, 4, :four)
+set_type_parameters(Foo{1,2,3}, 4, :four)
 set_type_parameters(Foo{1,2,3,4}, (1,3), (:A, :B))
 ```
 
@@ -81,15 +81,15 @@ Starting from a *specified* type, you can go back to the unspecified form by uns
 
 ```@repl type_parameters
 unspecify_type_parameters(Foo{1,2,3,4})
+unspecify_type_parameters(Foo{1,2,3,4}, 1)
 unspecify_type_parameters(Foo{1,2,3,4}, (1, 3))
-unspecify_type_parameter(Foo{1,2,3,4}, 1)
 ```
 
 Similarly, it is possible to set type parameters that have not been fully specified through [`specify_type_parameters`](@ref).
 
 ```@repl type_parameters
-specify_type_parameters(Foo, (1, 2), (:A, Int))
 specify_type_parameter(Foo{1,2,3}, 4, 4)
+specify_type_parameters(Foo, (1, 2), (:A, Int))
 ```
 
 Note that this function differs from [`set_type_parameters`](@ref) only by ignoring type parameters that have not been specified:

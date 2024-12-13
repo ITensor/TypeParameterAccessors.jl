@@ -3,9 +3,7 @@ using TypeParameterAccessors:
   TypeParameterAccessors,
   Position,
   default_type_parameters,
-  set_default_type_parameter,
   set_default_type_parameters,
-  specify_default_type_parameter,
   specify_default_type_parameters
 using TestExtras: @constinferred
 @testset "TypeParameterAccessors defaults" begin
@@ -21,8 +19,9 @@ using TestExtras: @constinferred
   end
 
   @testset "Set defaults" begin
-    @test @constinferred(set_default_type_parameter($(Array{Float32}), 1)) == Array{Float64}
-    @test @constinferred(set_default_type_parameter($(Array{Float32}), eltype)) ==
+    @test @constinferred(set_default_type_parameters($(Array{Float32}), 1)) ==
+      Array{Float64}
+    @test @constinferred(set_default_type_parameters($(Array{Float32}), eltype)) ==
       Array{Float64}
     @test @constinferred(set_default_type_parameters($(Array{Float32}))) == Vector{Float64}
     @test @constinferred(set_default_type_parameters($(Array{Float32}), $((1, 2)))) ==
@@ -30,20 +29,20 @@ using TestExtras: @constinferred
     @test @constinferred(set_default_type_parameters($(Array{Float32}), (eltype, ndims))) ==
       Vector{Float64}
     @test @constinferred(set_default_type_parameters($Array)) == Vector{Float64}
-    @test @constinferred(set_default_type_parameter($Array, 1)) == Array{Float64}
+    @test @constinferred(set_default_type_parameters($Array, 1)) == Array{Float64}
     @test @constinferred(set_default_type_parameters($Array, $((1, 2)))) == Vector{Float64}
   end
 
   @testset "Specify defaults" begin
-    @test @constinferred(specify_default_type_parameter($Array, 1)) == Array{Float64}
-    @test @constinferred(specify_default_type_parameter($Array, eltype)) == Array{Float64}
-    @test @constinferred(specify_default_type_parameter($Array, 2)) == Vector
-    @test @constinferred(specify_default_type_parameter($Array, ndims)) == Vector
+    @test @constinferred(specify_default_type_parameters($Array, 1)) == Array{Float64}
+    @test @constinferred(specify_default_type_parameters($Array, eltype)) == Array{Float64}
+    @test @constinferred(specify_default_type_parameters($Array, 2)) == Vector
+    @test @constinferred(specify_default_type_parameters($Array, ndims)) == Vector
     @test @constinferred(specify_default_type_parameters($Array)) == Vector{Float64}
-    @test @constinferred(specify_default_type_parameter($Array, 1)) == Array{Float64}
-    @test @constinferred(specify_default_type_parameter($Array, eltype)) == Array{Float64}
-    @test @constinferred(specify_default_type_parameter($Array, 2)) == Vector
-    @test @constinferred(specify_default_type_parameter($Array, ndims)) == Vector
+    @test @constinferred(specify_default_type_parameters($Array, 1)) == Array{Float64}
+    @test @constinferred(specify_default_type_parameters($Array, eltype)) == Array{Float64}
+    @test @constinferred(specify_default_type_parameters($Array, 2)) == Vector
+    @test @constinferred(specify_default_type_parameters($Array, ndims)) == Vector
     @test @constinferred(specify_default_type_parameters($Array, $((1, 2)))) ==
       Vector{Float64}
     @test @constinferred(specify_default_type_parameters($Array, (eltype, ndims))) ==

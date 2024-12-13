@@ -71,6 +71,12 @@ Return whether or not the type parameter at a given position is considered speci
 """
 is_parameter_specified(::Type{T}, pos) where {T} = !(type_parameters(T, pos) isa TypeVar)
 
+"""
+  unspecify_type_parameters(type::Type, [positions::Tuple])
+  unspecify_type_parameters(type::Type, position)
+
+Return a new type where the type parameters at the given positions are unset.
+"""
 unspecify_type_parameters(::Type{T}) where {T} = Base.typename(T).wrapper
 function unspecify_type_parameters(::Type{T}, pos::Tuple) where {T}
   @inline
@@ -86,17 +92,14 @@ end
   type_ex = construct_type_ex(T, allparams)
   return :(@inline; $type_ex)
 end
-
-unspecify_type_parameter(::Type{T}, pos) where {T} = unspecify_type_parameters(T, (pos,))
+unspecify_type_parameters(::Type{T}, pos) where {T} = unspecify_type_parameters(T, (pos,))
 
 """
-  unspecify_type_parameters(type::Type, [positions::Tuple])
-  unspecify_type_parameter(type::Type, position)
+  set_type_parameters(type::Type, positions::Tuple, parameters::Tuple)
+  set_type_parameters(type::Type, position, parameter)
 
-Return a new type where the type parameters at the given positions are unset.
+Return a new type where the type parameters at the given positions are set to the provided values.
 """
-unspecify_type_parameters, unspecify_type_parameter
-
 function set_type_parameters(
   ::Type{T}, pos::Tuple{Vararg{Any,N}}, parameters::Tuple{Vararg{Any,N}}
 ) where {T,N}
@@ -113,19 +116,17 @@ end
   type_ex = construct_type_ex(T, allparams)
   return :(@inline; $type_ex)
 end
-
-function set_type_parameter(::Type{T}, pos, param) where {T}
+function set_type_parameters(::Type{T}, pos, param) where {T}
   return set_type_parameters(T, (pos,), (param,))
 end
 
 """
-  set_type_parameters(type::Type, positions::Tuple, parameters::Tuple)
-  set_type_parameter(type::Type, position, parameter)
+  specify_type_parameters(type::Type, positions::Tuple, parameters::Tuple)
+  specify_type_parameters(type::Type, position, parameter)
 
-Return a new type where the type parameters at the given positions are set to the provided values.
+Return a new type where the type parameters at the given positions are set to the provided values,
+only if they were previously unspecified.
 """
-set_type_parameters, set_type_parameter
-
 function specify_type_parameters(
   ::Type{T}, pos::Tuple{Vararg{Any,N}}, parameters::Tuple{Vararg{Any,N}}
 ) where {T,N}
@@ -147,19 +148,9 @@ end
   type_ex = construct_type_ex(T, allparams)
   return :(@inline; $type_ex)
 end
-
-function specify_type_parameter(::Type{T}, pos, param) where {T}
+function specify_type_parameters(::Type{T}, pos, param) where {T}
   return specify_type_parameters(T, (pos,), (param,))
 end
-
-"""
-  specify_type_parameters(type::Type, positions::Tuple, parameters::Tuple)
-  specify_type_parameter(type::Type, position, parameter)
-
-Return a new type where the type parameters at the given positions are set to the provided values,
-only if they were previously unspecified.
-"""
-specify_type_parameters, specify_type_parameter
 
 """
   default_type_parameters(type::Type)::Tuple
@@ -179,41 +170,35 @@ end
 default_type_parameters(t) = default_type_parameters(typeof(t))
 default_type_parameters(t, pos) = default_type_parameters(typeof(t), pos)
 
+"""
+  set_default_type_parameters(type::Type, [positions::Tuple])
+  set_default_type_parameters(type::Type, position)
+
+Set the type parameters at the given positions to their default values.
+"""
 function set_default_type_parameters(::Type{T}, pos::Tuple) where {T}
   return set_type_parameters(T, pos, default_type_parameters.(T, pos))
 end
 function set_default_type_parameters(::Type{T}) where {T}
   return set_default_type_parameters(T, ntuple(identity, nparameters(T)))
 end
-
-function set_default_type_parameter(::Type{T}, pos) where {T}
+function set_default_type_parameters(::Type{T}, pos) where {T}
   return set_default_type_parameters(T, (pos,))
 end
 
 """
-  set_default_type_parameters(type::Type, [positions])
-  set_default_type_parameter(type::Type, position)
+  specify_default_type_parameters(type::Type, [positions::Tuple])
+  specify_default_type_parameters(type::Type, position)
 
-Set the type parameters at the given positions to their default values.
+Set the type parameters at the given positions to their default values, if they
+had not been specified.
 """
-set_default_type_parameters, set_default_type_parameter
-
 function specify_default_type_parameters(::Type{T}, pos::Tuple) where {T}
   return specify_type_parameters(T, pos, default_type_parameters.(T, pos))
 end
 function specify_default_type_parameters(::Type{T}) where {T}
   return specify_default_type_parameters(T, ntuple(identity, nparameters(T)))
 end
-
-function specify_default_type_parameter(::Type{T}, pos) where {T}
+function specify_default_type_parameters(::Type{T}, pos) where {T}
   return specify_default_type_parameters(T, (pos,))
 end
-
-"""
-  specify_default_type_parameters(type::Type, [positions])
-  specify_default_type_parameter(type::Type, position)
-
-Set the type parameters at the given positions to their default values, if they
-had not been specified.
-"""
-specify_default_type_parameters, specify_default_type_parameter
