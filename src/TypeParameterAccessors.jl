@@ -1,7 +1,7 @@
 module TypeParameterAccessors
 
 # Exports
-export type_parameters
+export type_parameters, get_type_parameters
 export nparameters, is_parameter_specified
 export default_type_parameters
 export set_type_parameters, set_default_type_parameters

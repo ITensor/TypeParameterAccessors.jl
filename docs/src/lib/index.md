@@ -25,6 +25,7 @@ Pages = ["index.md"]
 position
 Position
 type_parameters
+get_type_parameters
 default_type_parameters
 nparameters
 is_parameter_specified
