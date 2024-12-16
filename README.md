@@ -36,7 +36,7 @@ using Test: @test
 using TypeParameterAccessors
 ````
 
-Getting type parameters
+Get type parameters:
 
 ````julia
 @test type_parameters(Array{Float64}, 1) == Float64
@@ -44,10 +44,10 @@ Getting type parameters
 @test type_parameters(Matrix{Float64}) == (Float64, 2)
 @test type_parameters(Array{Float64}, eltype) == Float64
 @test type_parameters(Matrix{Float64}, ndims) == 2
-@test type_parameters.(Matrix{Float64}, (eltype, ndims)) == (Float64, 2)
+@test type_parameters(Matrix{Float64}, (eltype, ndims)) == (Float64, 2)
 ````
 
-Setting type parameters
+Set type parameters:
 
 ````julia
 @test set_type_parameters(Array, 1, Float32) == Array{Float32}
@@ -57,7 +57,7 @@ Setting type parameters
 @test set_type_parameters(Array, (eltype, ndims), (Float32, 2)) == Matrix{Float32}
 ````
 
-Specifying type parameters
+Specify type parameters:
 
 ````julia
 @test specify_type_parameters(Array{Float64}, (eltype, ndims), (Float32, 2)) ==
@@ -66,7 +66,7 @@ Specifying type parameters
 @test specify_type_parameters(Array{Float64}, eltype, Float32) == Array{Float64}
 ````
 
-Unspecifying type parameters
+Unspecify type parameters:
 
 ````julia
 @test unspecify_type_parameters(Matrix{Float32}) == Array
@@ -81,9 +81,10 @@ Getting default type parameters
 @test default_type_parameters(Array) == (Float64, 1)
 @test default_type_parameters(Array, eltype) == Float64
 @test default_type_parameters(Array, 2) == 1
+@test default_type_parameters(Array, (eltype, ndims)) == (Float64, 1)
 ````
 
-Setting default type parameters
+Set default type parameters:
 
 ````julia
 @test set_default_type_parameters(Array) == Vector{Float64}
@@ -91,7 +92,7 @@ Setting default type parameters
 @test set_default_type_parameters(Array, 2) == Vector
 ````
 
-Specifying default type parameters
+Specify default type parameters:
 
 ````julia
 @test specify_default_type_parameters(Matrix, (eltype, ndims)) == Matrix{Float64}
@@ -99,7 +100,7 @@ Specifying default type parameters
 @test specify_default_type_parameters(Array{Float32}, (eltype, ndims)) == Vector{Float32}
 ````
 
-Other functionality
+Other functionality:
 
 - `parenttype`
 - `unwrap_array_type`

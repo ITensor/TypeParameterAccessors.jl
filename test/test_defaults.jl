@@ -12,6 +12,9 @@ using TestExtras: @constinferred
     @test @constinferred(default_type_parameters($Array, 1)) == Float64
     @test @constinferred(default_type_parameters($Array, 2)) == 1
     @test @constinferred(default_type_parameters($Array)) == (Float64, 1)
+    @test @constinferred(default_type_parameters($Array, $((2, 1)))) == (1, Float64)
+    @test @constinferred(broadcast($default_type_parameters, $Array, (ndims, eltype))) ==
+      (1, Float64)
     @test @constinferred(broadcast($default_type_parameters, $Array, $((2, 1)))) ==
       (1, Float64)
     @test @constinferred(broadcast($default_type_parameters, $Array, (ndims, eltype))) ==

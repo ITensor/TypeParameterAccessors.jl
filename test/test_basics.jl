@@ -1,4 +1,4 @@
-using Test: @test_throws, @testset
+using Test: @test, @test_throws, @test_broken, @testset
 using TestExtras: @constinferred
 using TypeParameterAccessors:
   set_type_parameters, specify_type_parameters, type_parameters, unspecify_type_parameters
@@ -14,7 +14,12 @@ using TypeParameterAccessors:
   # @test_throws ErrorException type_parameter(Array, 1)
   @test @constinferred(type_parameters($(Array{Float64}), eltype)) == Float64
   @test @constinferred(type_parameters($(Matrix{Float64}), ndims)) == 2
-  # @test_throws ErrorException type_parameter(Array{Float64}, ndims) == 2
+  @test @constinferred(type_parameters($(Matrix{Float64}), (ndims, eltype))) == (2, Float64)
+  # TODO: Not inferrable without interpolating positions:
+  # https://github.com/ITensor/TypeParameterAccessors.jl/issues/21.
+  @test @constinferred(type_parameters($(Matrix{Float64}), $((2, eltype)))) == (2, Float64)
+  @test @constinferred(type_parameters($(Matrix{Float64}), (ndims, eltype))) == (2, Float64)
+  # @test_throws ErrorException type_parameters(Array{Float64}, ndims) == 2
   @test @constinferred(broadcast($type_parameters, $(Matrix{Float64}), $((2, eltype)))) ==
     (2, Float64)
 end
