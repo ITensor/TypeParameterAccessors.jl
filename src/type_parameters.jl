@@ -36,23 +36,54 @@ function positions(::Type{T}, pos::Tuple) where {T}
 end
 
 """
-  type_parameters(type_or_obj, [pos])
+  get_type_parameters(type_or_obj, [pos])
 
 Return a tuple containing the type parameters of a given type or object.
-Optionally you can specify a position to just get the parameter for that position.
+Optionally you can specify a position to just get the parameter for that position,
+or a tuple of positions to get a subset of parameters.
+
+If parameters are unspecified, returns a `TypeVar`. For a checked version,
+see [`type_parameters`](@ref).
 """
-function type_parameters end
+function get_type_parameters end
 
 # This implementation is type-stable in 1.11, but not in 1.10.
 # Attempts with `Base.@constprop :aggressive` failed, so generated function instead
 # @inline type_parameters(::Type{T}) where {T} = Tuple(Base.unwrap_unionall(T).parameters)
-@generated function type_parameters(::Type{T}) where {T}
+@generated function get_type_parameters(::Type{T}) where {T}
   params = wrap_symbol_quotenode.(Tuple(Base.unwrap_unionall(T).parameters))
   return :(@inline; ($(params...),))
 end
-@inline type_parameters(::Type{T}, pos) where {T} = type_parameters(T, position(T, pos))
-@inline type_parameters(::Type{T}, ::Position{p}) where {T,p} = type_parameters(T)[p]
-@inline type_parameters(::Type{T}, ::Position{0}) where {T} = T
+@inline get_type_parameters(::Type{T}, pos) where {T} = get_type_parameters(T, position(T, pos))
+@inline get_type_parameters(::Type{T}, ::Position{p}) where {T,p} = get_type_parameters(T)[p]
+@inline get_type_parameters(::Type{T}, ::Position{0}) where {T} = T
+@inline get_type_parameters(::Type{T}, pos::Tuple) where {T} = get_type_parameters.(T, pos)
+@inline get_type_parameters(object, pos) = get_type_parameters(typeof(object), pos)
+@inline get_type_parameters(object) = get_type_parameters(typeof(object))
+
+"""
+  type_parameters(type_or_obj, [pos])
+
+Return a tuple containing the type parameters of a given type or object.
+Optionally you can specify a position to just get the parameter for that position,
+or a tuple of positions to get a subset of parameters.
+
+Errors if parameters are unspecified. For an unchecked version,
+see [`get_type_parameters`](@ref).
+"""
+function type_parameters end
+
+function type_parameters(::Type{T}) where {T}
+  params = get_type_parameters(T)
+  any(param -> param isa TypeVar, params) && return error("One or more parameter is not specified.")
+  return params
+end
+@inline function type_parameters(::Type{T}, pos) where {T}
+  param = get_type_parameters(T, pos)
+  param isa TypeVar && return error("The parameter is not specified.")
+  return param
+end
+@inline type_parameters(::Type{T}, pos::Tuple) where {T} = type_parameters.(T, pos)
 @inline type_parameters(object, pos) = type_parameters(typeof(object), pos)
 @inline type_parameters(object) = type_parameters(typeof(object))
 
@@ -62,7 +93,7 @@ end
 Return the number of type parameters for a given type or object.
 """
 nparameters(object) = nparameters(typeof(object))
-nparameters(::Type{T}) where {T} = length(type_parameters(T))
+nparameters(::Type{T}) where {T} = length(get_type_parameters(T))
 
 """
   is_parameter_specified(type::Type, pos)
@@ -167,6 +198,7 @@ end
 function default_type_parameters(::Type{T}, ::Position{pos}) where {T,pos}
   return default_type_parameters(T)[pos]
 end
+default_type_parameters(::Type{T}, pos::Tuple) where {T} = default_type_parameters.(T, pos)
 default_type_parameters(t) = default_type_parameters(typeof(t))
 default_type_parameters(t, pos) = default_type_parameters(typeof(t), pos)
 
