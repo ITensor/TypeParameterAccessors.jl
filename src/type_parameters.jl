@@ -54,8 +54,10 @@ function get_type_parameters end
   params = wrap_symbol_quotenode.(Tuple(Base.unwrap_unionall(T).parameters))
   return :(@inline; ($(params...),))
 end
-@inline get_type_parameters(::Type{T}, pos) where {T} = get_type_parameters(T, position(T, pos))
-@inline get_type_parameters(::Type{T}, ::Position{p}) where {T,p} = get_type_parameters(T)[p]
+@inline get_type_parameters(::Type{T}, pos) where {T} =
+  get_type_parameters(T, position(T, pos))
+@inline get_type_parameters(::Type{T}, ::Position{p}) where {T,p} =
+  get_type_parameters(T)[p]
 @inline get_type_parameters(::Type{T}, ::Position{0}) where {T} = T
 @inline get_type_parameters(::Type{T}, pos::Tuple) where {T} = get_type_parameters.(T, pos)
 @inline get_type_parameters(object, pos) = get_type_parameters(typeof(object), pos)
@@ -75,7 +77,8 @@ function type_parameters end
 
 function type_parameters(::Type{T}) where {T}
   params = get_type_parameters(T)
-  any(param -> param isa TypeVar, params) && return error("One or more parameter is not specified.")
+  any(param -> param isa TypeVar, params) &&
+    return error("One or more parameter is not specified.")
   return params
 end
 @inline function type_parameters(::Type{T}, pos) where {T}
@@ -100,7 +103,8 @@ nparameters(::Type{T}) where {T} = length(get_type_parameters(T))
 
 Return whether or not the type parameter at a given position is considered specified.
 """
-is_parameter_specified(::Type{T}, pos) where {T} = !(type_parameters(T, pos) isa TypeVar)
+is_parameter_specified(::Type{T}, pos) where {T} =
+  !(get_type_parameters(T, pos) isa TypeVar)
 
 """
   unspecify_type_parameters(type::Type, [positions::Tuple])
@@ -116,9 +120,9 @@ end
 @generated function unspecify_type_parameters(
   ::Type{T}, positions::Tuple{Vararg{Position}}
 ) where {T}
-  allparams = collect(Any, type_parameters(T))
+  allparams = collect(Any, get_type_parameters(T))
   for pos in type_parameters(positions)
-    allparams[pos] = type_parameters(unspecify_type_parameters(T), Int(pos))
+    allparams[pos] = get_type_parameters(unspecify_type_parameters(T), Int(pos))
   end
   type_expr = construct_type_expr(T, allparams)
   return :(@inline; $type_expr)
@@ -140,8 +144,8 @@ end
   ::Type{T}, positions::Tuple{Vararg{Position,N}}, params::Tuple{Vararg{Any,N}}
 ) where {T,N}
   # collect parameters and change
-  allparams = collect(Any, type_parameters(T))
-  for (i, pos) in enumerate(type_parameters(positions))
+  allparams = collect(Any, get_type_parameters(T))
+  for (i, pos) in enumerate(get_type_parameters(positions))
     allparams[pos] = :(params[$i])
   end
   type_expr = construct_type_expr(T, allparams)
@@ -170,8 +174,8 @@ end
   ::Type{T}, positions::Tuple{Vararg{Position,N}}, params::Tuple{Vararg{Any,N}}
 ) where {T,N}
   # collect parameters and change unspecified
-  allparams = collect(Any, type_parameters(T))
-  for (i, pos) in enumerate(type_parameters(positions))
+  allparams = collect(Any, get_type_parameters(T))
+  for (i, pos) in enumerate(get_type_parameters(positions))
     if !is_parameter_specified(T, pos())
       allparams[pos] = :(params[$i])
     end
