@@ -1,5 +1,6 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 StridedViews = "4db3bf67-4bd7-4b4e-b153-31dc3fb37143"
@@ -10,6 +11,7 @@ TypeParameterAccessors = "7e5a90cf-f82e-492e-a09b-e3e26432c138"
 
 [compat]
 Aqua = "0.8.9"
+FillArrays = "1.13"
 SafeTestsets = "0.1"
 Suppressor = "0.2"
 Test = "1.10"
