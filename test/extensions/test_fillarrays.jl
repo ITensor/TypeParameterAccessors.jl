@@ -16,7 +16,8 @@ using FillArrays: Fill, Zeros, Ones
 
   @test @constinferred(set_type_parameters($Ta, eltype, $Float64)) ===
     Fill{Float64,ndims(a),typeof(axes(a))}
-  @test @constinferred(set_default_type_parameters($Ta)) === Fill{Float64,0,Tuple{}}
+  @test @constinferred(set_default_type_parameters($Ta)) ===
+    Fill{Float64,1,Tuple{Base.OneTo{Int}}}
 end
 
 @testset "Zeros" begin
@@ -30,7 +31,8 @@ end
 
   @test @constinferred(set_type_parameters($Ta, eltype, $Float64)) ===
     Zeros{Float64,ndims(a),typeof(axes(a))}
-  @test @constinferred(set_default_type_parameters($Ta)) === Zeros{Float64,0,Tuple{}}
+  @test @constinferred(set_default_type_parameters($Ta)) ===
+    Zeros{Float64,1,Tuple{Base.OneTo{Int}}}
 end
 
 @testset "Ones" begin
@@ -44,5 +46,6 @@ end
 
   @test @constinferred(set_type_parameters($Ta, eltype, $Float64)) ===
     Ones{Float64,ndims(a),typeof(axes(a))}
-  @test @constinferred(set_default_type_parameters($Ta)) === Ones{Float64,0,Tuple{}}
+  @test @constinferred(set_default_type_parameters($Ta)) ===
+    Ones{Float64,1,Tuple{Base.OneTo{Int}}}
 end
