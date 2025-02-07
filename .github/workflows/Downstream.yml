@@ -36,6 +36,7 @@ jobs:
         shell: julia --color=yes --project=downstream {0}
         run: |
           using Pkg
+          Pkg.Registry.add(url="https://github.com/ITensor/ITensorRegistry")
           try
             # force it to use this PR's version of the package
             Pkg.develop(PackageSpec(path="."))  # resolver may fail with main deps
