@@ -27,7 +27,11 @@ function position end
 position(object, name) = position(typeof(object), name)
 position(::Type, pos::Int) = Position(pos)
 position(::Type, pos::Position) = pos
-position(type::Type, pos) = throw(MethodError(position, (type, pos)))
+function position(type::Type, name)
+  base_type = unspecify_type_parameters(type)
+  base_type === type && error("`position` not defined for $type and $name.")
+  return position(base_type, name)
+end
 
 function positions(::Type{T}, pos::Tuple) where {T}
   return ntuple(length(pos)) do i
