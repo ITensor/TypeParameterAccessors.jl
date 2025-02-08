@@ -1,0 +1,22 @@
+name: "IntegrationTest"
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags: '*'
+  pull_request:
+
+jobs:
+  integration-test:
+    name: "IntegrationTest"
+    strategy:
+       matrix:
+         repo:
+           - 'ITensor/BlockSparseArrays.jl'
+           - 'ITensor/NamedDimsArrays.jl'
+           - 'ITensor/TensorAlgebra.jl'
+    uses: "ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main"
+    with:
+      local-registry-urls: "https://github.com/ITensor/ITensorRegistry.git"
+      repo: "${{ matrix.repo }}"
