@@ -13,7 +13,7 @@ function position(type::Type{<:AbstractArray}, name)
   elseif base_type === type
     # Try to determine the position from the AbstractArray
     # supertype.
-    return position_from_supertype(type, AbstractArray, name)
+    return position_from_supertype(base_type, AbstractArray, name)
   end
   # See if there is a definition on the base type.
   return position(base_type, name)
