@@ -1,3 +1,29 @@
+struct Self end
+position(a, ::Self) = Position(0)
+position(::Type, ::Self) = Position(0)
+function set_type_parameters(type::Type, ::Self, param)
+  return error("Can't set the parent type of an unwrapped array type.")
+end
+
+function position(type::Type{<:AbstractArray}, name)
+  base_type = unspecify_type_parameters(type)
+  if base_type === AbstractArray
+    # Use the AbstractArray position definitions.
+    return position(AbstractArray, name)
+  elseif base_type === type
+    # Try to determine the position from the AbstractArray
+    # supertype.
+    return position_from_supertype(type, AbstractArray, name)
+  end
+  # See if there is a definition on the base type.
+  return position(base_type, name)
+end
+
+# Fix ambiguity errors.
+position(::Type{<:AbstractArray}, pos::Int) = Position(pos)
+position(::Type{<:AbstractArray}, pos::Position) = pos
+position(::Type{<:AbstractArray}, ::Self) = Position(0)
+
 position(::Type{AbstractArray}, ::typeof(eltype)) = Position(1)
 position(::Type{AbstractArray}, ::typeof(ndims)) = Position(2)
 default_type_parameters(::Type{AbstractArray}) = (Float64, 1)
@@ -8,14 +34,6 @@ default_type_parameters(::Type{<:Array}) = (Float64, 1)
 
 position(::Type{<:BitArray}, ::typeof(ndims)) = Position(1)
 default_type_parameters(::Type{<:BitArray}) = (1,)
-
-struct Self end
-position(a, ::Self) = Position(0)
-position(::Type{T}, ::Self) where {T} = Position(0)
-
-function set_type_parameters(type::Type, ::Self, param)
-  return error("Can't set the parent type of an unwrapped array type.")
-end
 
 function set_eltype(array::AbstractArray, param)
   return convert(set_eltype(typeof(array), param), array)

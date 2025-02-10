@@ -33,6 +33,32 @@ function position(type::Type, name)
   return position(base_type, name)
 end
 
+using InteractiveUtils: supertypes
+
+# Automatically determine the position of a type parameter of a type given
+# a supertype and the position of the corresponding parameter in the supertype.
+@generated function position_from_supertype(
+  ::Type{T}, ::Type{ST}, pos::Position
+) where {T,ST}
+  supertype = supertypes(T)[findlast(t -> t <: ST, supertypes(T))]
+  params = Tuple(Base.unwrap_unionall(supertype).parameters)
+  param = params[Int(position(supertype, Int(pos)))]
+  if !(param isa TypeVar)
+    error("Position not found.")
+  end
+  new_pos = findfirst(p -> (p.name == param.name), get_type_parameters(T))
+  if isnothing(new_pos)
+    return error("Position not found.")
+  end
+  return :(@inline; $(Position(new_pos)))
+end
+
+# Automatically determine the position of a type parameter of a type given
+# a supertype and the name of the parameter.
+function position_from_supertype(type::Type, supertype_target::Type, name)
+  return position_from_supertype(type, supertype_target, position(supertype_target, name))
+end
+
 function positions(::Type{T}, pos::Tuple) where {T}
   return ntuple(length(pos)) do i
     return position(T, pos[i])

@@ -1,9 +1,10 @@
 name = "TypeParameterAccessors"
 uuid = "7e5a90cf-f82e-492e-a09b-e3e26432c138"
 authors = ["ITensor developers <support@itensor.org> and contributors"]
-version = "0.3.1"
+version = "0.3.2"
 
 [deps]
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 SimpleTraits = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
 
@@ -29,6 +30,7 @@ TypeParameterAccessorsoneAPIExt = "oneAPI"
 AMDGPU = "0, 1"
 CUDA = "3, 4, 5"
 FillArrays = "1.13"
+InteractiveUtils = "1.10"
 JLArrays = "0.1, 0.2"
 LinearAlgebra = "1.10"
 Metal = "0, 1"
