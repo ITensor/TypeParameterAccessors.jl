@@ -68,7 +68,7 @@ const anyarrayts = (
   @testset "On objects" begin
     @test @constinferred(type_parameters($(Val{3}()))) == (3,)
     @test @constinferred(type_parameters($(Val{Float32}()))) == (Float32,)
-    a = randn(Float32, (2, 2, 2))
+    a = arrayt(randn(Float32, (2, 2, 2)))
     @test @constinferred(type_parameters(a, 1)) == Float32
     @test @constinferred(type_parameters(a, eltype)) == Float32
     @test @constinferred(type_parameters(a, 2)) == 3
