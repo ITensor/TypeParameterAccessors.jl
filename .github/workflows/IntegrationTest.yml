@@ -17,11 +17,11 @@ jobs:
     strategy:
        matrix:
          repo:
-           - 'ITensor/UnallocatedArrays.jl'
-           - 'ITensor/TensorAlgebra.jl'
            - 'ITensor/BlockSparseArrays.jl'
            - 'ITensor/DerivableInterfaces.jl'
            - 'ITensor/NamedDimsArrays.jl'
+           - 'ITensor/TensorAlgebra.jl'
+           - 'ITensor/UnallocatedArrays.jl'
     uses: "ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main"
     with:
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
