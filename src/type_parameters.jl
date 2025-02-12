@@ -259,8 +259,15 @@ function default_type_parameters(::Type{T}, ::Position{pos}) where {T,pos}
   return default_type_parameters(T)[pos]
 end
 default_type_parameters(::Type{T}, pos::Tuple) where {T} = default_type_parameters.(T, pos)
-default_type_parameters(t) = default_type_parameters(typeof(t))
 default_type_parameters(t, pos) = default_type_parameters(typeof(t), pos)
+default_type_parameters(t) = default_type_parameters(typeof(t))
+function default_type_parameters(type::Type)
+  type′ = unspecify_type_parameters(type)
+  if type === type′
+    error("Default type parameters have not been defined for `$(type′)`.")
+  end
+  return default_type_parameters(type′)
+end
 
 """
   set_default_type_parameters(type::Type, [positions::Tuple])
