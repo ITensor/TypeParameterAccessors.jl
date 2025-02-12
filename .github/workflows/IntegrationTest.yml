@@ -19,6 +19,8 @@ jobs:
          repo:
            - 'ITensor/BlockSparseArrays.jl'
            - 'ITensor/DerivableInterfaces.jl'
+           - 'ITensor/ITensors.jl'
+           - 'ITensor/NDTensors.jl'
            - 'ITensor/NamedDimsArrays.jl'
            - 'ITensor/TensorAlgebra.jl'
            - 'ITensor/UnallocatedArrays.jl'
