@@ -2,7 +2,12 @@ using JLArrays: JLArray, JLMatrix, JLVector
 using Test: @test, @test_throws, @test_broken, @testset
 using TestExtras: @constinferred
 using TypeParameterAccessors:
-  set_type_parameters, specify_type_parameters, type_parameters, unspecify_type_parameters
+  TypeParameterAccessors,
+  Position,
+  set_type_parameters,
+  specify_type_parameters,
+  type_parameters,
+  unspecify_type_parameters
 
 const anyarrayts = (
   (arrayt=Array, matrixt=Matrix, vectort=Vector),
@@ -77,4 +82,31 @@ const anyarrayts = (
     @test @constinferred(broadcast($type_parameters, $(Ref(a)), $((2, eltype)))) ==
       (3, Float32)
   end
+end
+
+@testset "Automatic fallback for position" begin
+  struct MyArray{B,A} <: AbstractArray{A,B} end
+  @test @constinferred(TypeParameterAccessors.position(MyArray, eltype)) == Position(2)
+  @test @constinferred(TypeParameterAccessors.position(MyArray{3,Float32}, eltype)) ==
+    Position(2)
+  @test @constinferred(TypeParameterAccessors.position(MyArray, ndims)) == Position(1)
+  @test @constinferred(TypeParameterAccessors.position(MyArray{3,Float32}, ndims)) ==
+    Position(1)
+
+  struct MyVector{X,Y,A<:Real} <: AbstractArray{A,1} end
+  @test @constinferred(TypeParameterAccessors.position(MyVector, eltype)) == Position(3)
+  @test @constinferred(
+    TypeParameterAccessors.position(MyVector{Int,(1, 2),Float32}, eltype)
+  ) == Position(3)
+  @test_throws ErrorException TypeParameterAccessors.position(MyVector, ndims)
+  @test_throws ErrorException TypeParameterAccessors.position(
+    MyVector{Int,(1, 2),Float32}, ndims
+  )
+
+  struct MyBoolArray{X,Y,Z,B} <: AbstractArray{Bool,B} end
+  @test_throws ErrorException TypeParameterAccessors.position(MyBoolArray, eltype)
+  @test_throws ErrorException TypeParameterAccessors.position(MyBoolArray{1,2,3,4}, eltype)
+  @test @constinferred(TypeParameterAccessors.position(MyBoolArray, ndims)) == Position(4)
+  @test @constinferred(TypeParameterAccessors.position(MyBoolArray{1,2,3,4}, ndims)) ==
+    Position(4)
 end

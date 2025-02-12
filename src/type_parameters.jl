@@ -27,10 +27,62 @@ function position end
 position(object, name) = position(typeof(object), name)
 position(::Type, pos::Int) = Position(pos)
 position(::Type, pos::Position) = pos
+
 function position(type::Type, name)
-  base_type = unspecify_type_parameters(type)
-  base_type === type && error("`position` not defined for $type and $name.")
-  return position(base_type, name)
+  type′ = unspecify_type_parameters(type)
+  if type === type′
+    # Fallback definition that determines the
+    # position automatically from the supertype of
+    # the type.
+    return position_from_supertype(type′, name)
+  end
+  return position(type′, name)
+end
+
+# Automatically determine the position of a type parameter of a type given
+# a supertype and the name of the parameter.
+function position_from_supertype(type::Type, name)
+  type′ = unspecify_type_parameters(type)
+  supertype_pos = position(supertype(type′), name)
+  return position_from_supertype_position(type′, supertype_pos)
+end
+
+# Automatically determine the position of a type parameter of a type given
+# the supertype and the position of the corresponding parameter in the supertype.
+@generated function position_from_supertype_position(
+  ::Type{T}, supertype_pos::Position
+) where {T}
+  T′ = unspecify_type_parameters(T)
+  # The type parameters of the type as TypeVars.
+  # TODO: Ideally we would use `get_type_parameters`
+  # but that sometimes loses TypeVar names:
+  # https://github.com/ITensor/TypeParameterAccessors.jl/issues/30
+  type_params = Base.unwrap_unionall(T′).parameters
+  # The type parameters of the immediate supertype as TypeVars.
+  # This has TypeVars with names that correspond to the names of
+  # the TypeVars of the type parameters of `T`, for example:
+  # ```julia
+  # julia> struct MyArray{B,A} <: AbstractArray{A,B} end
+  #
+  # julia> Base.unwrap_unionall(MyArray).parameters
+  # svec(B, A)
+  #
+  # julia> Base.unwrap_unionall(supertype(MyArray)).parameters
+  # svec(A, B)
+  # ```
+  supertype_params = Base.unwrap_unionall(supertype(T)).parameters
+  supertype_param = supertype_params[Int(supertype_pos)]
+  pos = findfirst(param -> (param.name == supertype_param.name), type_params)
+  if isnothing(pos)
+    return error("Position not found.")
+  end
+  return :(@inline; $(Position(pos)))
+end
+
+# Automatically determine the position of a type parameter of a type given
+# a supertype and the name of the parameter.
+function position_from_supertype(type::Type, supertype_target::Type, name)
+  return position_from_supertype(type, supertype_target, position(supertype_target, name))
 end
 
 function positions(::Type{T}, pos::Tuple) where {T}
