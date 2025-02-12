@@ -5,25 +5,6 @@ function set_type_parameters(type::Type, ::Self, param)
   return error("Can't set the parent type of an unwrapped array type.")
 end
 
-function position(type::Type{<:AbstractArray}, name)
-  base_type = unspecify_type_parameters(type)
-  if base_type === AbstractArray
-    # Use the AbstractArray position definitions.
-    return position(AbstractArray, name)
-  elseif base_type === type
-    # Try to determine the position from the AbstractArray
-    # supertype.
-    return position_from_supertype(base_type, AbstractArray, name)
-  end
-  # See if there is a definition on the base type.
-  return position(base_type, name)
-end
-
-# Fix ambiguity errors.
-position(::Type{<:AbstractArray}, pos::Int) = Position(pos)
-position(::Type{<:AbstractArray}, pos::Position) = pos
-position(::Type{<:AbstractArray}, ::Self) = Position(0)
-
 position(::Type{AbstractArray}, ::typeof(eltype)) = Position(1)
 position(::Type{AbstractArray}, ::typeof(ndims)) = Position(2)
 default_type_parameters(::Type{AbstractArray}) = (Float64, 1)
