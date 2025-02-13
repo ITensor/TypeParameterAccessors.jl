@@ -28,6 +28,13 @@ end
   return set_eltype(arraytype, eltype)
 end
 
+function similartype(arraytype::Type{<:BitArray}, elt::Type)
+  if is_parameter_specified(arraytype, ndims)
+    return Array{elt,ndims(arraytype)}
+  end
+  return Array{elt}
+end
+
 @traitfn function similartype(
   arraytype::Type{ArrayT}, dims::Tuple
 ) where {ArrayT; !IsWrappedArray{ArrayT}}
