@@ -1,5 +1,5 @@
 using JLArrays: JLArray
-using Test: @test, @testset
+using Test: @test, @test_throws, @testset
 using TestExtras: @constinferred
 using TypeParameterAccessors:
   TypeParameterAccessors,
@@ -67,5 +67,25 @@ const arrayts = (Array, JLArray)
     @test @constinferred(default_type_parameters(a, 2)) == 1
     @test @constinferred(default_type_parameters(a, ndims)) == 1
     @test @constinferred(default_type_parameters(a)) == (Float64, 1)
+  end
+
+  @testset "Automatic fallback for defaults" begin
+    struct MyArray{B,A} <: AbstractArray{A,B} end
+    @test @constinferred(default_type_parameters(MyArray)) === (1, Float64)
+    @test @constinferred(default_type_parameters(MyArray{2,Float32})) === (1, Float64)
+    @test @constinferred(default_type_parameters(MyArray, eltype)) === Float64
+    @test @constinferred(default_type_parameters(MyArray, ndims)) === 1
+
+    und = TypeParameterAccessors.UndefinedDefaultTypeParameter()
+
+    struct MyVector{X,Y,A<:Real} <: AbstractArray{A,1} end
+    @test @constinferred(default_type_parameters(MyVector)) === (und, und, Float64)
+    @test @constinferred(default_type_parameters(MyVector, eltype)) === Float64
+    @test_throws ErrorException default_type_parameters(MyVector, ndims)
+
+    struct MyBoolArray{X,Y,Z,B} <: AbstractArray{Bool,B} end
+    @test @constinferred(default_type_parameters(MyBoolArray)) === (und, und, und, 1)
+    @test_throws ErrorException default_type_parameters(MyBoolArray, eltype)
+    @test @constinferred(default_type_parameters(MyBoolArray, ndims)) === 1
   end
 end

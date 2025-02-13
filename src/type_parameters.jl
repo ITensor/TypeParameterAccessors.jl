@@ -70,8 +70,11 @@ end
   # julia> Base.unwrap_unionall(supertype(MyArray)).parameters
   # svec(A, B)
   # ```
-  supertype_params = Base.unwrap_unionall(supertype(T)).parameters
+  supertype_params = Base.unwrap_unionall(supertype(T′)).parameters
   supertype_param = supertype_params[Int(supertype_pos)]
+  if !(supertype_param isa TypeVar)
+    error("Position not found.")
+  end
   pos = findfirst(param -> (param.name == supertype_param.name), type_params)
   if isnothing(pos)
     return error("Position not found.")
@@ -256,7 +259,11 @@ function default_type_parameters(::Type{T}, pos) where {T}
   return default_type_parameters(T, position(T, pos))
 end
 function default_type_parameters(::Type{T}, ::Position{pos}) where {T,pos}
-  return default_type_parameters(T)[pos]
+  param = default_type_parameters(T)[pos]
+  if param isa UndefinedDefaultTypeParameter
+    return error("No default parameter defined at this position.")
+  end
+  return param
 end
 default_type_parameters(::Type{T}, pos::Tuple) where {T} = default_type_parameters.(T, pos)
 default_type_parameters(t, pos) = default_type_parameters(typeof(t), pos)
@@ -264,9 +271,28 @@ default_type_parameters(t) = default_type_parameters(typeof(t))
 function default_type_parameters(type::Type)
   type′ = unspecify_type_parameters(type)
   if type === type′
-    error("Default type parameters have not been defined for `$(type′)`.")
+    return default_type_parameters_from_supertype(type′)
   end
   return default_type_parameters(type′)
+end
+
+struct UndefinedDefaultTypeParameter end
+
+@generated function default_type_parameters_from_supertype(::Type{T}) where {T}
+  T′ = unspecify_type_parameters(T)
+  supertype_default_type_params = default_type_parameters(supertype(T′))
+  type_params = Base.unwrap_unionall(T′).parameters
+  supertype_params = Base.unwrap_unionall(supertype(T′)).parameters
+  defaults = Any[UndefinedDefaultTypeParameter() for _ in 1:nparameters(T′)]
+  for (supertype_param, supertype_default_type_param) in
+      zip(supertype_params, supertype_default_type_params)
+    if !(supertype_param isa TypeVar)
+      continue
+    end
+    param_position = findfirst(param -> (param.name == supertype_param.name), type_params)
+    defaults[param_position] = supertype_default_type_param
+  end
+  return :(@inline; $(Tuple(defaults)))
 end
 
 """
