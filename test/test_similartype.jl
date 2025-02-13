@@ -29,6 +29,12 @@ using TypeParameterAccessors: NDims, similartype
     Array{Float64,3}
 
   # BitArray
+  @test @constinferred(similartype(BitArray)) == BitArray
+  @test @constinferred(similartype(BitVector)) == BitVector
+  @test @constinferred(similartype(BitArray, (2, 2, 2))) == BitArray{3}
+  @test @constinferred(similartype(BitVector, (2, 2, 2))) == BitArray{3}
+  @test @constinferred(similartype(BitArray, NDims(3))) == BitArray{3}
+  @test @constinferred(similartype(BitVector, NDims(3))) == BitArray{3}
   @test @constinferred(similartype(BitArray, Float32)) == Array{Float32}
   @test @constinferred(similartype(BitVector, Float32)) == Vector{Float32}
   @test @constinferred(similartype(BitArray, Float32, (2, 2, 2))) == Array{Float32,3}
