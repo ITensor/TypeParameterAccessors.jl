@@ -73,6 +73,8 @@ const arrayts = (Array, JLArray)
     struct MyArray{B,A} <: AbstractArray{A,B} end
     @test @constinferred(default_type_parameters(MyArray)) === (1, Float64)
     @test @constinferred(default_type_parameters(MyArray{2,Float32})) === (1, Float64)
+    @test @constinferred(default_type_parameters($MyArray, 1)) === 1
+    @test @constinferred(default_type_parameters($MyArray, 2)) === Float64
     @test @constinferred(default_type_parameters(MyArray, eltype)) === Float64
     @test @constinferred(default_type_parameters(MyArray, ndims)) === 1
 
@@ -80,11 +82,18 @@ const arrayts = (Array, JLArray)
 
     struct MyVector{X,Y,A<:Real} <: AbstractArray{A,1} end
     @test @constinferred(default_type_parameters(MyVector)) === (und, und, Float64)
+    @test_throws ErrorException default_type_parameters(MyVector, 1)
+    @test_throws ErrorException default_type_parameters(MyVector, 2)
+    @test @constinferred(default_type_parameters($MyVector, 3)) === Float64
     @test @constinferred(default_type_parameters(MyVector, eltype)) === Float64
     @test_throws ErrorException default_type_parameters(MyVector, ndims)
 
     struct MyBoolArray{X,Y,Z,B} <: AbstractArray{Bool,B} end
     @test @constinferred(default_type_parameters(MyBoolArray)) === (und, und, und, 1)
+    @test_throws ErrorException default_type_parameters(MyBoolArray, 1)
+    @test_throws ErrorException default_type_parameters(MyBoolArray, 2)
+    @test_throws ErrorException default_type_parameters(MyBoolArray, 3)
+    @test @constinferred(default_type_parameters($MyBoolArray, 4)) === 1
     @test_throws ErrorException default_type_parameters(MyBoolArray, eltype)
     @test @constinferred(default_type_parameters(MyBoolArray, ndims)) === 1
   end

@@ -82,12 +82,6 @@ end
   return :(@inline; $(Position(pos)))
 end
 
-# Automatically determine the position of a type parameter of a type given
-# a supertype and the name of the parameter.
-function position_from_supertype(type::Type, supertype_target::Type, name)
-  return position_from_supertype(type, supertype_target, position(supertype_target, name))
-end
-
 function positions(::Type{T}, pos::Tuple) where {T}
   return ntuple(length(pos)) do i
     return position(T, pos[i])
@@ -278,6 +272,13 @@ end
 
 struct UndefinedDefaultTypeParameter end
 
+# Determine the default type parameters of a type from the default type
+# parameters of the supertype of the type. Uses similar logic as
+# `position_from_supertype_position` for matching TypeVar names
+# between the type and the supertype. Type parameters that exist
+# in the type but not the supertype will have a default type parameter
+# `UndefinedDefaultTypeParameter()`. Accessing those type parameters
+# by name/position will throw an error.
 @generated function default_type_parameters_from_supertype(::Type{T}) where {T}
   T′ = unspecify_type_parameters(T)
   supertype_default_type_params = default_type_parameters(supertype(T′))
