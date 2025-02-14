@@ -20,6 +20,7 @@ jobs:
            - 'ITensor/BlockSparseArrays.jl'
            - 'ITensor/DerivableInterfaces.jl'
            - 'ITensor/ITensors.jl'
+           - 'ITensor/ITensors.jl:NDTensors'
            - 'ITensor/NamedDimsArrays.jl'
            - 'ITensor/TensorAlgebra.jl'
            - 'ITensor/UnallocatedArrays.jl'
