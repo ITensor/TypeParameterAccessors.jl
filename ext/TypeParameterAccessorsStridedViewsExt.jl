@@ -8,5 +8,8 @@ TypeParameterAccessors.position(::Type{<:StridedView}, ::typeof(ndims)) = Positi
 function TypeParameterAccessors.position(::Type{<:StridedView}, ::typeof(parenttype))
   return Position(3)
 end
+function TypeParameterAccessors.default_type_parameters(::Type{<:StridedView})
+  return (Float64, 1, Vector{Float64}, typeof(identity))
+end
 
 end
