@@ -17,11 +17,11 @@ jobs:
     strategy:
        matrix:
          repo:
-           - 'ITensor/BlockSparseArrays.jl'
-           - 'ITensor/DerivableInterfaces.jl'
-           - 'ITensor/NamedDimsArrays.jl'
-           - 'ITensor/TensorAlgebra.jl'
-           - 'ITensor/UnallocatedArrays.jl'
+           - '(ghuser = "ITensor", repo = "BlockSparseArrays")'
+           - '(ghuser = "ITensor", repo = "DerivableInterfaces")'
+           - '(ghuser = "ITensor", repo = "NamedDimsArrays")'
+           - '(ghuser = "ITensor", repo = "TensorAlgebra")'
+           - '(ghuser = "ITensor", repo = "UnallocatedArrays")'
     uses: "ITensor/ITensorActions/.github/workflows/IntegrationTest.yml@main"
     with:
       localregistry: "https://github.com/ITensor/ITensorRegistry.git"
