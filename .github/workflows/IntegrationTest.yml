@@ -19,8 +19,6 @@ jobs:
          pkg:
            - 'BlockSparseArrays'
            - 'DerivableInterfaces'
-           - 'ITensors'
-           - 'NDTensors'
            - 'NamedDimsArrays'
            - 'TensorAlgebra'
            - 'UnallocatedArrays'
