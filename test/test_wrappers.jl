@@ -117,7 +117,8 @@ using TypeParameterAccessors:
     wrapped_array = StridedView(randn(2, 2))
     wrapped_array_type = typeof(wrapped_array)
     @test @inferred(is_wrapped_array(wrapped_array)) == true
-    @test @inferred(parenttype(wrapped_array)) == Memory{Float64}
-    @test @inferred(unwrap_array_type(wrapped_array_type)) == Memory{Float64}
+    unwrapped_type = VERSION ≥ v"1.11-" ? Memory{Float64} : Vector{Float64}
+    @test @inferred(parenttype(wrapped_array)) === unwrapped_type
+    @test @inferred(unwrap_array_type(wrapped_array_type)) === unwrapped_type
   end
 end
