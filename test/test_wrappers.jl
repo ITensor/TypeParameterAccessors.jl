@@ -1,5 +1,3 @@
-using Test: @test_broken, @testset
-using TestExtras: @constinferred
 using LinearAlgebra:
   Adjoint,
   Diagonal,
@@ -10,6 +8,9 @@ using LinearAlgebra:
   UnitLowerTriangular,
   UnitUpperTriangular,
   UpperTriangular
+using StridedViews: StridedView
+using Test: @inferred, @test, @test_broken, @testset
+using TestExtras: @constinferred
 using TypeParameterAccessors:
   type_parameters,
   NDims,
@@ -20,7 +21,6 @@ using TypeParameterAccessors:
   set_parenttype,
   unspecify_type_parameters,
   unwrap_array_type
-using StridedViews: StridedView
 
 @testset "TypeParameterAccessors wrapper types" begin
   @testset "Array" begin
@@ -117,7 +117,8 @@ using StridedViews: StridedView
     wrapped_array = StridedView(randn(2, 2))
     wrapped_array_type = typeof(wrapped_array)
     @test @inferred(is_wrapped_array(wrapped_array)) == true
-    @test @inferred(parenttype(wrapped_array)) == Matrix{Float64}
-    @test @inferred(unwrap_array_type(wrapped_array_type)) == Matrix{Float64}
+    unwrapped_type = VERSION ≥ v"1.11-" ? Memory{Float64} : Vector{Float64}
+    @test @inferred(parenttype(wrapped_array)) === unwrapped_type
+    @test @inferred(unwrap_array_type(wrapped_array_type)) === unwrapped_type
   end
 end

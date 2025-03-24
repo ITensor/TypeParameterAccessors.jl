@@ -1,7 +1,7 @@
 name = "TypeParameterAccessors"
 uuid = "7e5a90cf-f82e-492e-a09b-e3e26432c138"
 authors = ["ITensor developers <support@itensor.org> and contributors"]
-version = "0.3.6"
+version = "0.3.7"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -33,6 +33,6 @@ JLArrays = "0.1, 0.2"
 LinearAlgebra = "1.10"
 Metal = "0, 1"
 SimpleTraits = "0.9.4"
-StridedViews = "0.3.2"
+StridedViews = "0.3.2, 0.4"
 julia = "1.10"
 oneAPI = "0, 1, 2"
