@@ -16,7 +16,12 @@ makedocs(;
     edit_link="main",
     assets=["assets/favicon.ico", "assets/extras.css"],
   ),
-  pages=["Home" => "index.md", "Reference" => "reference.md"],
+  pages=[
+    "Home" => "index.md",
+    "Type parameters" => "type_interface.md",
+    "Library" => "lib/index.md",
+  ],
+  checkdocs=:exports,
 )
 
 deploydocs(;
