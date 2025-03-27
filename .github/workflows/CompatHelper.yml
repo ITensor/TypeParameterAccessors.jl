@@ -12,3 +12,5 @@ jobs:
   compat-helper:
     name: "CompatHelper"
     uses: "ITensor/ITensorActions/.github/workflows/CompatHelper.yml@main"
+    with:
+      localregistry: "https://github.com/ITensor/ITensorRegistry.git"
