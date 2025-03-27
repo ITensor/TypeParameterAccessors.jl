@@ -10,15 +10,12 @@
 ## Support
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" width="20%" srcset="docs/src/assets/CCQ-
-ark.png">
-  <img alt="Flatiron Center for Computational Quantum Physics logo." width="20%" src="d
-cs/src/assets/CCQ.png">
+  <source media="(prefers-color-scheme: dark)" width="20%" srcset="docs/src/assets/CCQ-dark.png">
+  <img alt="Flatiron Center for Computational Quantum Physics logo." width="20%" src="docs/src/assets/CCQ.png">
 </picture>
 
 
-TypeParameterAccessors.jl is supported by the Flatiron Institute, a division of the Sim
-ns Foundation.
+TypeParameterAccessors.jl is supported by the Flatiron Institute, a division of the Simons Foundation.
 
 ## Installation instructions
 
