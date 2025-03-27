@@ -12,9 +12,9 @@ makedocs(;
   authors="ITensor developers <support@itensor.org> and contributors",
   sitename="TypeParameterAccessors.jl",
   format=Documenter.HTML(;
-    canonical="https://ITensor.github.io/TypeParameterAccessors.jl",
+    canonical="https://itensor.github.io/TypeParameterAccessors.jl",
     edit_link="main",
-    assets=String[],
+    assets=["assets/favicon.ico", "assets/extras.css"],
   ),
   pages=[
     "Home" => "index.md",
