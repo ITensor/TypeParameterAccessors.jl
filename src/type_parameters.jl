@@ -157,7 +157,7 @@ nparameters(::Type{T}) where {T} = length(get_type_parameters(T))
 Return whether or not the type parameter at a given position is considered specified.
 """
 function is_parameter_specified(::Type{T}, pos) where {T}
-  !(get_type_parameters(T, pos) isa TypeVar)
+  return !(get_type_parameters(T, pos) isa TypeVar)
 end
 
 """
