@@ -107,10 +107,10 @@ function get_type_parameters end
   params = wrap_symbol_quotenode.(Tuple(Base.unwrap_unionall(T).parameters))
   return :(@inline; ($(params...),))
 end
-@inline get_type_parameters(::Type{T}, pos) where {T} =
-  get_type_parameters(T, position(T, pos))
-@inline get_type_parameters(::Type{T}, ::Position{p}) where {T,p} =
-  get_type_parameters(T)[p]
+@inline get_type_parameters(::Type{T}, pos) where {T} = get_type_parameters(
+  T, position(T, pos)
+)
+@inline get_type_parameters(::Type{T}, ::Position{p}) where {T,p} = get_type_parameters(T)[p]
 @inline get_type_parameters(::Type{T}, ::Position{0}) where {T} = T
 @inline get_type_parameters(::Type{T}, pos::Tuple) where {T} = get_type_parameters.(T, pos)
 @inline get_type_parameters(object, pos) = get_type_parameters(typeof(object), pos)
@@ -156,8 +156,9 @@ nparameters(::Type{T}) where {T} = length(get_type_parameters(T))
 
 Return whether or not the type parameter at a given position is considered specified.
 """
-is_parameter_specified(::Type{T}, pos) where {T} =
-  !(get_type_parameters(T, pos) isa TypeVar)
+function is_parameter_specified(::Type{T}, pos) where {T}
+  return !(get_type_parameters(T, pos) isa TypeVar)
+end
 
 """
   unspecify_type_parameters(type::Type, [positions::Tuple])
