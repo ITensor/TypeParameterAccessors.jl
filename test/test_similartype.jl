@@ -49,32 +49,49 @@ using TypeParameterAccessors: NDims, similartype
   @test similartype(randn(Float32, 3, 3, 3), Val(2)) === Matrix{Float32}
 
   # Adjoint
-  @test similartype(Adjoint{Float32,Matrix{Float32}}, Float64, (2, 2, 2)) ==
+  @test similartype(Adjoint{Float32,Matrix{Float32}}, Float64, (2, 2, 2)) ===
     Array{Float64,3}
-  @test similartype(Adjoint{Float32,Matrix{Float32}}, Float64, NDims(3)) == Array{Float64,3}
-  @test similartype(Adjoint{Float32,Matrix{Float32}}, Float64) == Matrix{Float64}
+  @test similartype(Adjoint{Float32,Matrix{Float32}}, Float64, NDims(3)) ===
+    Array{Float64,3}
+  @test similartype(Adjoint{Float32,Matrix{Float32}}, Float64) === Matrix{Float64}
 
   # Diagonal
-  @test similartype(Diagonal{Float32,Vector{Float32}}) == Matrix{Float32}
-  @test similartype(Diagonal{Float32,Vector{Float32}}, Float64) == Matrix{Float64}
-  @test similartype(Diagonal{Float32,Vector{Float32}}, (2, 2, 2)) == Array{Float32,3}
-  @test similartype(Diagonal{Float32,Vector{Float32}}, NDims(3)) == Array{Float32,3}
-  @test similartype(Diagonal{Float32,Vector{Float32}}, Float64, (2, 2, 2)) ==
+  @test similartype(Diagonal{Float32,Vector{Float32}}) === Matrix{Float32}
+  @test similartype(Diagonal{Float32,Vector{Float32}}, Float64) === Matrix{Float64}
+  @test similartype(Diagonal{Float32,Vector{Float32}}, (2, 2, 2)) === Array{Float32,3}
+  @test similartype(Diagonal{Float32,Vector{Float32}}, NDims(3)) === Array{Float32,3}
+  @test similartype(Diagonal{Float32,Vector{Float32}}, Float64, (2, 2, 2)) ===
     Array{Float64,3}
-  @test similartype(Diagonal{Float32,Vector{Float32}}, Float64, NDims(3)) ==
+  @test similartype(Diagonal{Float32,Vector{Float32}}, Float64, NDims(3)) ===
     Array{Float64,3}
 
   # BitArray
-  @test @constinferred(similartype(BitVector)) == BitVector
-  @test @constinferred(similartype(BitArray, (2, 2, 2))) == BitArray{3}
-  @test @constinferred(similartype(BitVector, (2, 2, 2))) == BitArray{3}
-  @test @constinferred(similartype(BitArray, NDims(3))) == BitArray{3}
-  @test @constinferred(similartype(BitVector, NDims(3))) == BitArray{3}
-  @test @constinferred(similartype(BitVector, Float32)) == Vector{Float32}
-  @test @constinferred(similartype(BitArray, Float32, (2, 2, 2))) == Array{Float32,3}
-  @test @constinferred(similartype(BitVector, Float32, (2, 2, 2))) == Array{Float32,3}
-  @test @constinferred(similartype(BitArray, Float32, NDims(3))) == Array{Float32,3}
-  @test @constinferred(similartype(BitVector, Float32, NDims(3))) == Array{Float32,3}
+  @test @constinferred(similartype(BitVector)) === BitVector
+  if VERSION < v"1.11-"
+    @test similartype(BitArray, (2, 2, 2)) === BitArray{3}
+  else
+    @test @constinferred(similartype(BitArray, (2, 2, 2))) == BitArray{3}
+  end
+  @test @constinferred(similartype(BitVector, (2, 2, 2))) === BitArray{3}
+  if VERSION < v"1.11-"
+    @test similartype(BitArray, NDims(3)) === BitArray{3}
+  else
+    @test @constinferred(similartype(BitArray, NDims(3))) === BitArray{3}
+  end
+  @test @constinferred(similartype(BitVector, NDims(3))) === BitArray{3}
+  @test @constinferred(similartype(BitVector, Float32)) === Vector{Float32}
+  if VERSION < v"1.11-"
+    @test similartype(BitArray, Float32, (2, 2, 2)) === Array{Float32,3}
+  else
+    @test @constinferred(similartype(BitArray, Float32, (2, 2, 2))) === Array{Float32,3}
+  end
+  @test @constinferred(similartype(BitVector, Float32, (2, 2, 2))) === Array{Float32,3}
+  if VERSION < v"1.11-"
+    @test similartype(BitArray, Float32, NDims(3)) === Array{Float32,3}
+  else
+    @test @constinferred(similartype(BitArray, Float32, NDims(3))) === Array{Float32,3}
+  end
+  @test @constinferred(similartype(BitVector, Float32, NDims(3))) === Array{Float32,3}
   @test_throws ArgumentError similartype(BitArray)
   @test_throws ArgumentError similartype(BitArray, Float32)
 end
