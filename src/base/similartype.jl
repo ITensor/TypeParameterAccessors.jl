@@ -1,50 +1,70 @@
-"""
-`set_indstype` should be overloaded for
-types with structured dimensions,
-like `OffsetArrays` or named indices
-(such as ITensors).
-"""
-function set_indstype(arraytype::Type{<:AbstractArray}, dims::Tuple)
-  return set_ndims(arraytype, NDims(length(dims)))
+# Inputs as types.
+function similartype(
+  arraytype::Type{<:AbstractArray}, elt::Type{<:Type}, axt::Type{<:Tuple}
+)
+  return Base.promote_op(similar, arraytype, elt, axt)
+end
+function similartype(
+  arraytype::Type{<:AbstractArray}, elt::Type{<:Type}, ndms::Type{<:Union{Val{N},NDims{N}}}
+) where {N}
+  return similartype(arraytype, elt, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
+end
+function similartype(arraytype::Type{<:AbstractArray{<:Any,N}}, elt::Type{<:Type}) where {N}
+  return similartype(arraytype, elt, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
+end
+function similartype(arraytype::Type{<:AbstractArray{T}}, axt::Type{<:Tuple}) where {T}
+  return similartype(arraytype, Type{T}, axt)
+end
+function similartype(
+  arraytype::Type{<:AbstractArray{T}}, ::Type{<:Union{Val{N},NDims{N}}}
+) where {T,N}
+  return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
 end
 
-function similartype(arraytype::Type{<:AbstractArray}, eltype::Type, ndims::NDims)
-  return similartype(similartype(arraytype, eltype), ndims)
+function similartype(arraytype::Type{<:AbstractArray}, elt::Type, ndms::Union{Val,NDims})
+  return similartype(arraytype, Type{elt}, Tuple{ntuple(Returns(Base.OneTo{Int}), ndms)...})
 end
 
-function similartype(arraytype::Type{<:AbstractArray}, eltype::Type, dims::Tuple)
-  return similartype(similartype(arraytype, eltype), dims)
+function similartype(arraytype::Type{<:AbstractArray}, elt::Type, dims::Tuple)
+  return similartype(arraytype, Type{elt}, typeof(dims))
 end
 
-@traitfn function similartype(
-  arraytype::Type{ArrayT}
-) where {ArrayT;!IsWrappedArray{ArrayT}}
-  return arraytype
+function similartype(arraytype::Type{<:AbstractArray{T,N}}) where {T,N}
+  return similartype(arraytype, T, Val(N))
+end
+function similartype(arraytype::Type{<:AbstractArray})
+  return throw(
+    ArgumentError(
+      "`similartype` requires specified type parameters if `eltype` and `ndims` aren't passed.",
+    ),
+  )
 end
 
-@traitfn function similartype(
-  arraytype::Type{ArrayT}, eltype::Type
-) where {ArrayT;!IsWrappedArray{ArrayT}}
-  return set_eltype(arraytype, eltype)
+function similartype(arraytype::Type{<:AbstractArray{<:Any,N}}, elt::Type) where {N}
+  return similartype(arraytype, elt, Val(N))
+end
+function similartype(arraytype::Type{<:AbstractArray}, elt::Type)
+  return throw(
+    ArgumentError("`similartype` requires specified `ndims` if `ndims` isn't passed.")
+  )
 end
 
-function similartype(arraytype::Type{<:BitArray}, elt::Type)
-  if is_parameter_specified(arraytype, ndims)
-    return Array{elt,ndims(arraytype)}
-  end
-  return Array{elt}
+function similartype(arraytype::Type{<:AbstractArray{T}}, dims::Tuple) where {T}
+  return similartype(arraytype, T, dims)
+end
+function similartype(arraytype::Type{<:AbstractArray}, dims::Tuple)
+  return throw(
+    ArgumentError("`similartype` requires specified `eltype` if `eltype` isn't passed.")
+  )
 end
 
-@traitfn function similartype(
-  arraytype::Type{ArrayT}, dims::Tuple
-) where {ArrayT;!IsWrappedArray{ArrayT}}
-  return set_indstype(arraytype, dims)
+function similartype(arraytype::Type{<:AbstractArray{T}}, ndms::Union{Val,NDims}) where {T}
+  return similartype(arraytype, T, ndms)
 end
-
-@traitfn function similartype(
-  arraytype::Type{ArrayT}, ndims::NDims
-) where {ArrayT;!IsWrappedArray{ArrayT}}
-  return set_ndims(arraytype, ndims)
+function similartype(arraytype::Type{<:AbstractArray}, ndms::Union{Val,NDims})
+  return throw(
+    ArgumentError("`similartype` requires specified `eltype` if `eltype` isn't passed.")
+  )
 end
 
 function similartype(
@@ -53,41 +73,11 @@ function similartype(
   return similartype(arraytype, (dim1, dim_rest...))
 end
 
-## Wrapped arrays
-@traitfn function similartype(arraytype::Type{ArrayT}) where {ArrayT;IsWrappedArray{ArrayT}}
-  return similartype(unwrap_array_type(arraytype), NDims(arraytype))
-end
-
-@traitfn function similartype(
-  arraytype::Type{ArrayT}, eltype::Type
-) where {ArrayT;IsWrappedArray{ArrayT}}
-  return similartype(unwrap_array_type(arraytype), eltype, NDims(arraytype))
-end
-
-@traitfn function similartype(
-  arraytype::Type{ArrayT}, dims::Tuple
-) where {ArrayT;IsWrappedArray{ArrayT}}
-  return similartype(unwrap_array_type(arraytype), dims)
-end
-
-@traitfn function similartype(
-  arraytype::Type{ArrayT}, ndims::NDims
-) where {ArrayT;IsWrappedArray{ArrayT}}
-  return similartype(unwrap_array_type(arraytype), ndims)
-end
-
-# This is for uniform `Diag` storage which uses
-# a Number as the data type.
-# TODO: Delete this when we change to using a
-# `FillArray` instead. This is a stand-in
-# to make things work with the current design.
-function similartype(numbertype::Type{<:Number})
-  return numbertype
-end
-
 # Instances
 function similartype(array::AbstractArray, eltype::Type, dims...)
   return similartype(typeof(array), eltype, dims...)
 end
-similartype(array::AbstractArray, eltype::Type) = similartype(typeof(array), eltype)
+function similartype(array::AbstractArray, eltype::Type)
+  return similartype(typeof(array), eltype, axes(array))
+end
 similartype(array::AbstractArray, dims...) = similartype(typeof(array), dims...)
