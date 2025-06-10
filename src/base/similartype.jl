@@ -12,17 +12,41 @@ end
 function similartype(arraytype::Type{<:AbstractArray{<:Any,N}}, elt::Type{<:Type}) where {N}
   return similartype(arraytype, elt, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
 end
+# Fix ambiguity error.
+function similartype(arraytype::Type{<:AbstractArray{T,N}}, elt::Type{<:Type}) where {T,N}
+  return similartype(arraytype, elt, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
+end
 function similartype(arraytype::Type{<:AbstractArray{T}}, axt::Type{<:Tuple}) where {T}
   return similartype(arraytype, Type{T}, axt)
 end
-function similartype(
-  arraytype::Type{<:AbstractArray{T}}, ::Type{<:Union{Val{N},NDims{N}}}
-) where {T,N}
+# Fix ambiguity error.
+function similartype(arraytype::Type{<:AbstractArray{T,N}}, axt::Type{<:Tuple}) where {T,N}
+  return similartype(arraytype, Type{T}, axt)
+end
+function similartype(arraytype::Type{<:AbstractArray{T}}, ::Type{Val{N}}) where {T,N}
+  return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
+end
+# Fix ambiguity error.
+function similartype(arraytype::Type{<:AbstractArray{T,M}}, ::Type{Val{N}}) where {T,M,N}
+  return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
+end
+function similartype(arraytype::Type{<:AbstractArray{T}}, ::Type{NDims{N}}) where {T,N}
+  return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
+end
+# Fix ambiguity error.
+function similartype(arraytype::Type{<:AbstractArray{T,M}}, ::Type{NDims{N}}) where {T,M,N}
   return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
 end
 
-function similartype(arraytype::Type{<:AbstractArray}, elt::Type, ndms::Union{Val,NDims})
-  return similartype(arraytype, Type{elt}, Tuple{ntuple(Returns(Base.OneTo{Int}), ndms)...})
+function similartype(arraytype::Type{<:AbstractArray}, elt::Type, ndms::Val{N}) where {N}
+  return similartype(
+    arraytype, Type{elt}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...}
+  )
+end
+function similartype(arraytype::Type{<:AbstractArray}, elt::Type, ndms::NDims{N}) where {N}
+  return similartype(
+    arraytype, Type{elt}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...}
+  )
 end
 
 function similartype(arraytype::Type{<:AbstractArray}, elt::Type, dims::Tuple)
@@ -41,6 +65,10 @@ function similartype(arraytype::Type{<:AbstractArray})
 end
 
 function similartype(arraytype::Type{<:AbstractArray{<:Any,N}}, elt::Type) where {N}
+  return similartype(arraytype, elt, Val(N))
+end
+# Fix ambiguity error.
+function similartype(arraytype::Type{<:AbstractArray{T,N}}, elt::Type) where {T,N}
   return similartype(arraytype, elt, Val(N))
 end
 function similartype(arraytype::Type{<:AbstractArray}, elt::Type)
