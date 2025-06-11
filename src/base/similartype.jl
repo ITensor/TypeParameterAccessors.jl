@@ -1,111 +1,72 @@
-# Inputs as types.
-function similartype(
-  arraytype::Type{<:AbstractArray}, elt::Type{<:Type}, axt::Type{<:Tuple}
-)
-  return Base.promote_op(similar, arraytype, elt, axt)
-end
-function similartype(
-  arraytype::Type{<:AbstractArray}, elt::Type{<:Type}, ndms::Type{<:Union{Val{N},NDims{N}}}
-) where {N}
-  return similartype(arraytype, elt, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
-end
-function similartype(arraytype::Type{<:AbstractArray{<:Any,N}}, elt::Type{<:Type}) where {N}
-  return similartype(arraytype, elt, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
-end
-# Fix ambiguity error.
-function similartype(arraytype::Type{<:AbstractArray{T,N}}, elt::Type{<:Type}) where {T,N}
-  return similartype(arraytype, elt, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
-end
-function similartype(arraytype::Type{<:AbstractArray{T}}, axt::Type{<:Tuple}) where {T}
-  return similartype(arraytype, Type{T}, axt)
-end
-# Fix ambiguity error.
-function similartype(arraytype::Type{<:AbstractArray{T,N}}, axt::Type{<:Tuple}) where {T,N}
-  return similartype(arraytype, Type{T}, axt)
-end
-function similartype(arraytype::Type{<:AbstractArray{T}}, ::Type{Val{N}}) where {T,N}
-  return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
-end
-# Fix ambiguity error.
-function similartype(arraytype::Type{<:AbstractArray{T,M}}, ::Type{Val{N}}) where {T,M,N}
-  return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
-end
-function similartype(arraytype::Type{<:AbstractArray{T}}, ::Type{NDims{N}}) where {T,N}
-  return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
-end
-# Fix ambiguity error.
-function similartype(arraytype::Type{<:AbstractArray{T,M}}, ::Type{NDims{N}}) where {T,M,N}
-  return similartype(arraytype, Type{T}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...})
-end
-
-function similartype(arraytype::Type{<:AbstractArray}, elt::Type, ndms::Val{N}) where {N}
-  return similartype(
-    arraytype, Type{elt}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...}
-  )
-end
-function similartype(arraytype::Type{<:AbstractArray}, elt::Type, ndms::NDims{N}) where {N}
-  return similartype(
-    arraytype, Type{elt}, Tuple{ntuple(Returns(Base.OneTo{Int}), Val(N))...}
-  )
-end
-
-function similartype(arraytype::Type{<:AbstractArray}, elt::Type, dims::Tuple)
-  return similartype(arraytype, Type{elt}, typeof(dims))
-end
-
-function similartype(arraytype::Type{<:AbstractArray{T,N}}) where {T,N}
-  return similartype(arraytype, T, Val(N))
-end
-function similartype(arraytype::Type{<:AbstractArray})
-  return throw(
+function check_similartype_output(type::Type)
+  isconcretetype(type) || throw(
     ArgumentError(
-      "`similartype` requires specified type parameters if `eltype` and `ndims` aren't passed.",
+      "`similartype` output `$type`, which is not concrete. The corresponding call to `similar` may not be defined or may not be type stable.",
     ),
   )
+  return type
 end
 
-function similartype(arraytype::Type{<:AbstractArray{<:Any,N}}, elt::Type) where {N}
-  return similartype(arraytype, elt, Val(N))
+"""
+    similartype(A, [elt], [shape])
+    similartype(typeof(A), [typeof(elt)], [typeof(shape)])
+
+    similartype(typeof(A), shape)
+    similartype(typeof(typeof(A)), typeof(shape))
+
+Compute the type that is returned by calling `Base.similar` on the given arguments.
+You can either pass instances or types.
+
+!!! warning
+    The fallback definition for this function uses `Base.promote_op(similar, args...)`,
+    so new implementations of `similar` cannot use this function to determine the output
+    type without also implementing `similartype`. Additionally, getting a result that
+    is a concrete type requires that the corresponding `similar` call is type stable.
+"""
+similartype
+
+# similartype(a, elt, ax)
+function similartype(arrayt::Type{<:AbstractArray}, eltt::Type{<:Type}, axt::Type{<:Tuple})
+  return check_similartype_output(Base.promote_op(similar, arrayt, eltt, axt))
 end
-# Fix ambiguity error.
-function similartype(arraytype::Type{<:AbstractArray{T,N}}, elt::Type) where {T,N}
-  return similartype(arraytype, elt, Val(N))
+function similartype(arrayt::Type{<:AbstractArray}, elt::Type, ax::Tuple)
+  return similartype(arrayt, Type{elt}, typeof(ax))
 end
-function similartype(arraytype::Type{<:AbstractArray}, elt::Type)
-  return throw(
-    ArgumentError("`similartype` requires specified `ndims` if `ndims` isn't passed.")
-  )
+function similartype(a::AbstractArray, elt::Type, ax::Tuple)
+  return similartype(typeof(a), Type{elt}, typeof(ax))
 end
 
-function similartype(arraytype::Type{<:AbstractArray{T}}, dims::Tuple) where {T}
-  return similartype(arraytype, T, dims)
+# similartype(a, elt)
+function similartype(arrayt::Type{<:AbstractArray}, eltt::Type{<:Type})
+  return check_similartype_output(Base.promote_op(similar, arrayt, eltt))
 end
-function similartype(arraytype::Type{<:AbstractArray}, dims::Tuple)
-  return throw(
-    ArgumentError("`similartype` requires specified `eltype` if `eltype` isn't passed.")
-  )
+function similartype(arrayt::Type{<:AbstractArray}, elt::Type)
+  return similartype(arrayt, Type{elt})
 end
-
-function similartype(arraytype::Type{<:AbstractArray{T}}, ndms::Union{Val,NDims}) where {T}
-  return similartype(arraytype, T, ndms)
-end
-function similartype(arraytype::Type{<:AbstractArray}, ndms::Union{Val,NDims})
-  return throw(
-    ArgumentError("`similartype` requires specified `eltype` if `eltype` isn't passed.")
-  )
+function similartype(a::AbstractArray, elt::Type)
+  return similartype(typeof(a), Type{elt})
 end
 
-function similartype(
-  arraytype::Type{<:AbstractArray}, dim1::Base.DimOrInd, dim_rest::Base.DimOrInd...
-)
-  return similartype(arraytype, (dim1, dim_rest...))
+# similartype(a, ax)
+function similartype(arrayt::Type{<:AbstractArray}, axt::Type{<:Tuple})
+  return check_similartype_output(Base.promote_op(similar, arrayt, axt))
+end
+function similartype(a::AbstractArray, ax::Tuple)
+  return similartype(typeof(a), typeof(ax))
 end
 
-# Instances
-function similartype(array::AbstractArray, eltype::Type, dims...)
-  return similartype(typeof(array), eltype, dims...)
+# similartype(typeof(a), ax)
+function similartype(arraytt::Type{<:Type{<:AbstractArray}}, axt::Type{<:Tuple})
+  return check_similartype_output(Base.promote_op(similar, arraytt, axt))
 end
-function similartype(array::AbstractArray, eltype::Type)
-  return similartype(typeof(array), eltype, axes(array))
+function similartype(arrayt::Type{<:AbstractArray}, ax::Tuple)
+  return similartype(Type{arrayt}, typeof(ax))
 end
-similartype(array::AbstractArray, dims...) = similartype(typeof(array), dims...)
+
+# similartype(a)
+function similartype(arrayt::Type{<:AbstractArray})
+  return check_similartype_output(Base.promote_op(similar, arrayt))
+end
+function similartype(a::AbstractArray)
+  return similartype(typeof(a))
+end
