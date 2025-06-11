@@ -1,13 +1,11 @@
 function check_similartype_output(type::Type)
-  isconcretetype(type) || throw(
-    ArgumentError(
-      "`similartype` output `$type`, which is not concrete. The corresponding call to `similar` may not be defined or may not be type stable.",
-    ),
+  isconcretetype(type) || error(
+    "`similartype` output `$type`, which is not concrete. The corresponding call to `similar` may not be defined or may not be type stable.",
   )
   return type
 end
 
-"""
+@doc """
     similartype(A, [elt], [shape])
     similartype(typeof(A), [typeof(elt)], [typeof(shape)])
 
@@ -16,6 +14,12 @@ end
 
 Compute the type that is returned by calling `Base.similar` on the given arguments.
 You can either pass instances or types.
+
+Note that by default the versions taking arguments call the versions taking types,
+so it is recommended to overload the versions taking types. Note that the versions with different
+argument combinations, for example `similartype(A)`, `similartype(A, elt)`, `similartype(A, shape)`,
+and `similartype(A, elt, shape)`, are separate codepaths, unlike some implementations of `similar`,
+so they should be customized separately if needed.
 
 !!! warning
     The fallback definition for this function uses `Base.promote_op(similar, args...)`,
