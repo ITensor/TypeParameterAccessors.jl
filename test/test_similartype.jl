@@ -1,3 +1,4 @@
+using Base.Broadcast: broadcasted
 using LinearAlgebra: Adjoint, Diagonal
 using Test: @test, @test_broken, @test_throws, @testset
 using TestExtras: @constinferred
@@ -71,4 +72,16 @@ using TypeParameterAccessors: NDims, similartype
   @test @constinferred(similartype(BitVector, Float32, (2, 2, 2))) === Array{Float32,3}
   @test_throws ArgumentError similartype(BitArray)
   @test_throws ArgumentError similartype(BitArray, Float32)
+
+  # Base.Broadcasted (test on non-AbstractArray)
+  bc = broadcasted(+, randn(2, 2, 2), randn(2, 2, 2))
+  @test @constinferred(similartype(bc, Float32, Base.OneTo.((3, 3)))) === Matrix{Float32}
+  @test @constinferred(
+    similartype(typeof(bc), Type{Float32}, NTuple{2,Base.OneTo{Int}})
+  ) === Matrix{Float32}
+  @test @constinferred(similartype(bc, Float32, (3, 3))) === Matrix{Float32}
+  @test @constinferred(similartype(typeof(bc), Type{Float32}, NTuple{2,Int})) ===
+    Matrix{Float32}
+  @test @constinferred(similartype(bc, Float32)) === Array{Float32,3}
+  @test @constinferred(similartype(typeof(bc), Type{Float32})) === Array{Float32,3}
 end

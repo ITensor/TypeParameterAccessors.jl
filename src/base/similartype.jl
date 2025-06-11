@@ -26,47 +26,47 @@ You can either pass instances or types.
 similartype
 
 # similartype(a, elt, ax)
-function similartype(arrayt::Type{<:AbstractArray}, eltt::Type{<:Type}, axt::Type{<:Tuple})
+function similartype(arrayt::Type, eltt::Type{<:Type}, axt::Type{<:Tuple})
   return check_similartype_output(Base.promote_op(similar, arrayt, eltt, axt))
 end
-function similartype(arrayt::Type{<:AbstractArray}, elt::Type, ax::Tuple)
+function similartype(arrayt::Type, elt::Type, ax::Tuple)
   return similartype(arrayt, Type{elt}, typeof(ax))
 end
-function similartype(a::AbstractArray, elt::Type, ax::Tuple)
+function similartype(a, elt::Type, ax::Tuple)
   return similartype(typeof(a), Type{elt}, typeof(ax))
 end
 
 # similartype(a, elt)
-function similartype(arrayt::Type{<:AbstractArray}, eltt::Type{<:Type})
+function similartype(arrayt::Type, eltt::Type{<:Type})
   return check_similartype_output(Base.promote_op(similar, arrayt, eltt))
 end
-function similartype(arrayt::Type{<:AbstractArray}, elt::Type)
+function similartype(arrayt::Type, elt::Type)
   return similartype(arrayt, Type{elt})
 end
-function similartype(a::AbstractArray, elt::Type)
+function similartype(a, elt::Type)
   return similartype(typeof(a), Type{elt})
 end
 
 # similartype(a, ax)
-function similartype(arrayt::Type{<:AbstractArray}, axt::Type{<:Tuple})
+function similartype(arrayt::Type, axt::Type{<:Tuple})
   return check_similartype_output(Base.promote_op(similar, arrayt, axt))
 end
-function similartype(a::AbstractArray, ax::Tuple)
+function similartype(a, ax::Tuple)
   return similartype(typeof(a), typeof(ax))
 end
 
 # similartype(typeof(a), ax)
-function similartype(arraytt::Type{<:Type{<:AbstractArray}}, axt::Type{<:Tuple})
+function similartype(arraytt::Type{<:Type}, axt::Type{<:Tuple})
   return check_similartype_output(Base.promote_op(similar, arraytt, axt))
 end
-function similartype(arrayt::Type{<:AbstractArray}, ax::Tuple)
+function similartype(arrayt::Type, ax::Tuple)
   return similartype(Type{arrayt}, typeof(ax))
 end
 
 # similartype(a)
-function similartype(arrayt::Type{<:AbstractArray})
+function similartype(arrayt::Type)
   return check_similartype_output(Base.promote_op(similar, arrayt))
 end
-function similartype(a::AbstractArray)
+function similartype(a)
   return similartype(typeof(a))
 end
