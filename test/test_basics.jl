@@ -4,6 +4,9 @@ using TestExtras: @constinferred
 using TypeParameterAccessors:
   TypeParameterAccessors,
   Position,
+  complextype,
+  imagtype,
+  realtype,
   set_type_parameters,
   specify_type_parameters,
   type_parameters,
@@ -109,4 +112,30 @@ end
   @test @constinferred(TypeParameterAccessors.position(MyBoolArray, ndims)) == Position(4)
   @test @constinferred(TypeParameterAccessors.position(MyBoolArray{1,2,3,4}, ndims)) ==
     Position(4)
+end
+
+@testset "complextype, realtype, imagtype" begin
+  @test complextype(Float32(1.2)) === ComplexF32
+  @test complextype(Float32(1.2) + Float32(2.3) * im) === ComplexF32
+  @test complextype(Float32) === ComplexF32
+  @test complextype(ComplexF32) === ComplexF32
+  @test complextype(Type{Float32}) === ComplexF32
+  @test complextype(Type{ComplexF32}) === ComplexF32
+  @test complextype(randn(Float32, 2, 2)) === Matrix{ComplexF32}
+  @test complextype(randn(ComplexF32, 2, 2)) === Matrix{ComplexF32}
+  @test complextype(Matrix{Float32}) === Matrix{ComplexF32}
+  @test complextype(Matrix{ComplexF32}) === Matrix{ComplexF32}
+
+  for f in (realtype, imagtype)
+    @test @constinferred(f(Float32(1.2))) === Float32
+    @test @constinferred(f(Float32(1.2) + Float32(2.3) * im)) === Float32
+    @test @constinferred(f(Float32)) === Float32
+    @test @constinferred(f(ComplexF32)) === Float32
+    @test @constinferred(f(Type{Float32})) === Float32
+    @test @constinferred(f(Type{ComplexF32})) === Float32
+    @test @constinferred(f(randn(Float32, 2, 2))) === Matrix{Float32}
+    @test @constinferred(f(randn(ComplexF32, 2, 2))) === Matrix{Float32}
+    @test @constinferred(f(Matrix{Float32})) === Matrix{Float32}
+    @test @constinferred(f(Matrix{ComplexF32})) === Matrix{Float32}
+  end
 end
