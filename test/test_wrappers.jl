@@ -7,7 +7,8 @@ using LinearAlgebra:
   Transpose,
   UnitLowerTriangular,
   UnitUpperTriangular,
-  UpperTriangular
+  UpperTriangular,
+  diag
 using StridedViews: StridedView
 using Test: @inferred, @test, @test_broken, @testset
 using TestExtras: @constinferred
@@ -20,6 +21,7 @@ using TypeParameterAccessors:
   set_ndims,
   set_parenttype,
   unspecify_type_parameters,
+  unwrap_array,
   unwrap_array_type
 
 @testset "TypeParameterAccessors wrapper types" begin
@@ -82,6 +84,7 @@ using TypeParameterAccessors:
         @test @inferred set_eltype(wrapped_array, Float32) isa
           wrapper{Float32,Matrix{Float32}}
       end
+      @test unwrap_array(wrapped_array) == array
     end
   end
 
@@ -100,6 +103,7 @@ using TypeParameterAccessors:
       @test @inferred(set_eltype(wrapped_array, Float32)) isa
         Diagonal{Float32,Vector{Float32}}
     end
+    @test unwrap_array(wrapped_array) == diag(array)
   end
 
   @testset "LinearAlgebra nested wrappers" begin
@@ -110,15 +114,18 @@ using TypeParameterAccessors:
     @test @inferred(parenttype(wrapped_array)) <:
       Base.ReshapedArray{Float64,1,Transpose{Float64,Matrix{Float64}}}
     @test @inferred(unwrap_array_type(array)) == Matrix{Float64}
+    @test unwrap_array(wrapped_array) == array
   end
 
   @testset "StridedView" begin
     array = randn(2, 2)
-    wrapped_array = StridedView(randn(2, 2))
+    wrapped_array = StridedView(array)
     wrapped_array_type = typeof(wrapped_array)
     @test @inferred(is_wrapped_array(wrapped_array)) == true
     unwrapped_type = VERSION ≥ v"1.11-" ? Memory{Float64} : Vector{Float64}
     @test @inferred(parenttype(wrapped_array)) === unwrapped_type
     @test @inferred(unwrap_array_type(wrapped_array_type)) === unwrapped_type
+    #StridedView wraps as Memory{Float64} in Julia 1.11
+    @test vec(unwrap_array(wrapped_array)) == vec(array)
   end
 end
