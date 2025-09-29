@@ -114,7 +114,7 @@ using TypeParameterAccessors:
     @test @inferred(parenttype(wrapped_array)) <:
       Base.ReshapedArray{Float64,1,Transpose{Float64,Matrix{Float64}}}
     @test @inferred(unwrap_array_type(array)) == Matrix{Float64}
-    @test unwrap_array(unwrap_array(unwrap_array(wrapped_array))) == array
+    @test unwrap_array(wrapped_array) == array
   end
 
   @testset "StridedView" begin
