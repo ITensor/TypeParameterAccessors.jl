@@ -7,7 +7,8 @@ using LinearAlgebra:
   Transpose,
   UnitLowerTriangular,
   UnitUpperTriangular,
-  UpperTriangular
+  UpperTriangular,
+  diag
 using StridedViews: StridedView
 using Test: @inferred, @test, @test_broken, @testset
 using TestExtras: @constinferred
@@ -102,8 +103,7 @@ using TypeParameterAccessors:
       @test @inferred(set_eltype(wrapped_array, Float32)) isa
         Diagonal{Float32,Vector{Float32}}
     end
-    #Diagonal is not a wrapper?
-    @test unwrap_array(wrapped_array) != array
+    @test unwrap_array(wrapped_array) == diag(array)
   end
 
   @testset "LinearAlgebra nested wrappers" begin
@@ -125,7 +125,7 @@ using TypeParameterAccessors:
     unwrapped_type = VERSION ≥ v"1.11-" ? Memory{Float64} : Vector{Float64}
     @test @inferred(parenttype(wrapped_array)) === unwrapped_type
     @test @inferred(unwrap_array_type(wrapped_array_type)) === unwrapped_type
-    #StridedView is not a wrapper?
-    @test unwrap_array(wrapped_array) != array
+    #StridedView wraps as Memory{Float64} in Julia 1.11
+    @test vec(unwrap_array(wrapped_array)) == vec(array)
   end
 end

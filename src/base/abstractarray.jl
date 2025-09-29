@@ -48,7 +48,7 @@ using SimpleTraits: Not, @traitfn
 
 function unwrap_array(a::AbstractArray)
   p = parent(a)
-  p ≡ a && return a
+  p isa typeof(a) && return a
   return unwrap_array(p)
 end
 
