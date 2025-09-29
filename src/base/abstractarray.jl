@@ -46,6 +46,12 @@ is_wrapped_array(arraytype::Type{<:AbstractArray}) = (parenttype(arraytype) ≠ 
 
 using SimpleTraits: Not, @traitfn
 
+function unwrap_array(a::AbstractArray)
+  p = parent(a)
+  p ≡ a && return a
+  return unwrap_array(p)
+end
+
 @traitfn function unwrap_array_type(
   arraytype::Type{ArrayType}
 ) where {ArrayType;IsWrappedArray{ArrayType}}
