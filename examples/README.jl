@@ -1,5 +1,5 @@
 # # TypeParameterAccessors.jl
-# 
+#
 # [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://itensor.github.io/TypeParameterAccessors.jl/stable/)
 # [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://itensor.github.io/TypeParameterAccessors.jl/dev/)
 # [![Build Status](https://github.com/ITensor/TypeParameterAccessors.jl/actions/workflows/Tests.yml/badge.svg?branch=main)](https://github.com/ITensor/TypeParameterAccessors.jl/actions/workflows/Tests.yml?query=branch%3Amain)
@@ -45,7 +45,7 @@ using TypeParameterAccessors
 
 # Specify type parameters:
 @test specify_type_parameters(Array{Float64}, (eltype, ndims), (Float32, 2)) ==
-  Matrix{Float64}
+    Matrix{Float64}
 @test specify_type_parameters(Array{Float64}, ndims, 2) == Matrix{Float64}
 @test specify_type_parameters(Array{Float64}, eltype, Float32) == Array{Float64}
 
