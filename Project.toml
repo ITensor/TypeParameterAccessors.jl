@@ -26,10 +26,10 @@ TypeParameterAccessorsStridedViewsExt = "StridedViews"
 TypeParameterAccessorsoneAPIExt = "oneAPI"
 
 [compat]
-AMDGPU = "0, 1"
+AMDGPU = "0, 1, 2"
 CUDA = "3, 4, 5"
 FillArrays = "1.13"
-JLArrays = "0.1, 0.2"
+JLArrays = "0.1, 0.2, 0.3"
 LinearAlgebra = "1.10"
 Metal = "0, 1"
 SimpleTraits = "0.9.4"
