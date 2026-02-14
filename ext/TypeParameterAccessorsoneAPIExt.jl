@@ -1,7 +1,7 @@
 module TypeParameterAccessorsoneAPIExt
 
-using oneAPI: oneAPI, oneArray
 using TypeParameterAccessors: TypeParameterAccessors, Position
+using oneAPI: oneAPI, oneArray
 
 TypeParameterAccessors.position(::Type{<:oneArray}, ::typeof(eltype)) = Position(1)
 TypeParameterAccessors.position(::Type{<:oneArray}, ::typeof(ndims)) = Position(2)

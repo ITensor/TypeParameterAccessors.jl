@@ -1,7 +1,7 @@
 module TypeParameterAccessorsFillArraysExt
 
+using FillArrays: Fill, Ones, Zeros
 using TypeParameterAccessors: TypeParameterAccessors, Position
-using FillArrays: Fill, Zeros, Ones
 
 for T in (:Fill, :Zeros, :Ones)
     @eval begin

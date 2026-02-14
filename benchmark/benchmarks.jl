@@ -1,5 +1,5 @@
-using TypeParameterAccessors
 using BenchmarkTools
+using TypeParameterAccessors
 
 SUITE = BenchmarkGroup()
 SUITE["rand"] = @benchmarkable rand(10)

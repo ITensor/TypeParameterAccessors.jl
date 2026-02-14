@@ -1,5 +1,5 @@
-using TypeParameterAccessors: TypeParameterAccessors
 using Documenter: Documenter, DocMeta, deploydocs, makedocs
+using TypeParameterAccessors: TypeParameterAccessors
 
 DocMeta.setdocmeta!(
     TypeParameterAccessors, :DocTestSetup, :(using TypeParameterAccessors); recursive = true
@@ -14,16 +14,17 @@ makedocs(;
     format = Documenter.HTML(;
         canonical = "https://itensor.github.io/TypeParameterAccessors.jl",
         edit_link = "main",
-        assets = ["assets/favicon.ico", "assets/extras.css"],
+        assets = ["assets/favicon.ico", "assets/extras.css"]
     ),
     pages = [
         "Home" => "index.md",
         "Type parameters" => "type_interface.md",
         "Library" => "lib/index.md",
     ],
-    checkdocs = :exports,
+    checkdocs = :exports
 )
 
 deploydocs(;
-    repo = "github.com/ITensor/TypeParameterAccessors.jl", devbranch = "main", push_preview = true
+    repo = "github.com/ITensor/TypeParameterAccessors.jl", devbranch = "main",
+    push_preview = true
 )

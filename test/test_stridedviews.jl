@@ -1,8 +1,7 @@
+using StridedViews: StridedView
 using Test: @testset
 using TestExtras: @constinferred
-
-using TypeParameterAccessors: type_parameters, parenttype, set_type_parameters
-using StridedViews: StridedView
+using TypeParameterAccessors: parenttype, set_type_parameters, type_parameters
 
 @testset "StridedViews" begin
     a = StridedView(zeros(Int, 2, 2))

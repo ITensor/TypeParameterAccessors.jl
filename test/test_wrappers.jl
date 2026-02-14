@@ -1,27 +1,10 @@
-using LinearAlgebra:
-    Adjoint,
-    Diagonal,
-    Hermitian,
-    LowerTriangular,
-    Symmetric,
-    Transpose,
-    UnitLowerTriangular,
-    UnitUpperTriangular,
-    UpperTriangular,
-    diag
+using LinearAlgebra: Adjoint, Diagonal, Hermitian, LowerTriangular, Symmetric, Transpose,
+    UnitLowerTriangular, UnitUpperTriangular, UpperTriangular, diag
 using StridedViews: StridedView
 using Test: @inferred, @test, @test_broken, @testset
 using TestExtras: @constinferred
-using TypeParameterAccessors:
-    type_parameters,
-    NDims,
-    is_wrapped_array,
-    parenttype,
-    set_eltype,
-    set_ndims,
-    set_parenttype,
-    unspecify_type_parameters,
-    unwrap_array,
+using TypeParameterAccessors: NDims, is_wrapped_array, parenttype, set_eltype, set_ndims,
+    set_parenttype, type_parameters, unspecify_type_parameters, unwrap_array,
     unwrap_array_type
 
 @testset "TypeParameterAccessors wrapper types" begin
