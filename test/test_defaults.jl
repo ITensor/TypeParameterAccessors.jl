@@ -1,12 +1,8 @@
 using JLArrays: JLArray
 using Test: @test, @test_throws, @testset
 using TestExtras: @constinferred
-using TypeParameterAccessors:
-    TypeParameterAccessors,
-    Position,
-    default_type_parameters,
-    set_default_type_parameters,
-    specify_default_type_parameters
+using TypeParameterAccessors: TypeParameterAccessors, Position, default_type_parameters,
+    set_default_type_parameters, specify_default_type_parameters
 
 const arrayts = (Array, JLArray)
 @testset "TypeParameterAccessors defaults $arrayt" for arrayt in arrayts
@@ -16,11 +12,15 @@ const arrayts = (Array, JLArray)
         @test @constinferred(default_type_parameters($arrayt, 2)) == 1
         @test @constinferred(default_type_parameters($arrayt)) == (Float64, 1)
         @test @constinferred(default_type_parameters($arrayt, $((2, 1)))) == (1, Float64)
-        @test @constinferred(broadcast($default_type_parameters, $arrayt, (ndims, eltype))) ==
+        @test @constinferred(
+            broadcast($default_type_parameters, $arrayt, (ndims, eltype))
+        ) ==
             (1, Float64)
         @test @constinferred(broadcast($default_type_parameters, $arrayt, $((2, 1)))) ==
             (1, Float64)
-        @test @constinferred(broadcast($default_type_parameters, $arrayt, (ndims, eltype))) ==
+        @test @constinferred(
+            broadcast($default_type_parameters, $arrayt, (ndims, eltype))
+        ) ==
             (1, Float64)
     end
 

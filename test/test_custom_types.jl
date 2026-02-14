@@ -1,15 +1,8 @@
 using Test: @testset
-using TypeParameterAccessors:
-    TypeParameterAccessors,
-    Position,
-    default_type_parameters,
-    set_default_type_parameters,
-    set_type_parameters,
-    specify_default_type_parameters,
-    specify_type_parameters,
-    type_parameters,
-    unspecify_type_parameters
 using TestExtras: @constinferred
+using TypeParameterAccessors: TypeParameterAccessors, Position, default_type_parameters,
+    set_default_type_parameters, set_type_parameters, specify_default_type_parameters,
+    specify_type_parameters, type_parameters, unspecify_type_parameters
 @testset "TypeParameterAccessors, named positions and defaults" begin
     struct MyType{P1, P2} end
     TypeParameterAccessors.default_type_parameters(::Type{<:MyType}) = (:P1, :P2)
@@ -25,11 +18,14 @@ using TestExtras: @constinferred
 
     @test @constinferred(set_default_type_parameters(MyType{1, 2}, 1)) == MyType{:P1, 2}
     @test @constinferred(set_default_type_parameters(MyType{<:Any, 2}, 1)) == MyType{:P1, 2}
-    @test @constinferred(set_default_type_parameters(MyType{<:Any, 2}, 2)) == MyType{<:Any, :P2}
+    @test @constinferred(set_default_type_parameters(MyType{<:Any, 2}, 2)) ==
+        MyType{<:Any, :P2}
     @test @constinferred(set_default_type_parameters(MyType{<:Any, 2})) == MyType{:P1, :P2}
 
-    @test @constinferred(specify_default_type_parameters(MyType{<:Any, 2})) == MyType{:P1, 2}
-    @test @constinferred(specify_default_type_parameters(MyType{<:Any, 2}, 1)) == MyType{:P1, 2}
+    @test @constinferred(specify_default_type_parameters(MyType{<:Any, 2})) ==
+        MyType{:P1, 2}
+    @test @constinferred(specify_default_type_parameters(MyType{<:Any, 2}, 1)) ==
+        MyType{:P1, 2}
     @test @constinferred(specify_default_type_parameters(MyType{<:Any, 2}, 2)) ==
         MyType{<:Any, 2}
     @test @constinferred(specify_default_type_parameters(MyType)) == MyType{:P1, :P2}

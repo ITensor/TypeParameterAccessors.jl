@@ -1,15 +1,8 @@
 using JLArrays: JLArray, JLMatrix, JLVector
-using Test: @test, @test_throws, @test_broken, @testset
+using Test: @test, @test_broken, @test_throws, @testset
 using TestExtras: @constinferred
-using TypeParameterAccessors:
-    TypeParameterAccessors,
-    Position,
-    complextype,
-    imagtype,
-    realtype,
-    set_type_parameters,
-    specify_type_parameters,
-    type_parameters,
+using TypeParameterAccessors: TypeParameterAccessors, Position, complextype, imagtype,
+    realtype, set_type_parameters, specify_type_parameters, type_parameters,
     unspecify_type_parameters
 
 const anyarrayts = (
@@ -47,14 +40,20 @@ const anyarrayts = (
     @testset "Set parameters" begin
         @test @constinferred(set_type_parameters($arrayt, 1, $Float64)) == arrayt{Float64}
         @test @constinferred(set_type_parameters($arrayt, 2, 2)) == matrixt
-        @test @constinferred(set_type_parameters($arrayt, $eltype, $Float32)) == arrayt{Float32}
-        @test @constinferred(set_type_parameters($arrayt, $((eltype, 2)), $((Float32, 3)))) ==
+        @test @constinferred(set_type_parameters($arrayt, $eltype, $Float32)) ==
+            arrayt{Float32}
+        @test @constinferred(
+            set_type_parameters($arrayt, $((eltype, 2)), $((Float32, 3)))
+        ) ==
             arrayt{Float32, 3}
     end
 
     @testset "Specify parameters" begin
-        @test @constinferred(specify_type_parameters($arrayt, 1, $Float64)) == arrayt{Float64}
-        @test @constinferred(specify_type_parameters($matrixt, $((2, 1)), $((4, Float32)))) ==
+        @test @constinferred(specify_type_parameters($arrayt, 1, $Float64)) ==
+            arrayt{Float64}
+        @test @constinferred(
+            specify_type_parameters($matrixt, $((2, 1)), $((4, Float32)))
+        ) ==
             matrixt{Float32}
         @test @constinferred(specify_type_parameters($arrayt, $((Float64, 2)))) ==
             matrixt{Float64}
@@ -67,9 +66,12 @@ const anyarrayts = (
 
     @testset "Unspecify parameters" begin
         @test @constinferred(unspecify_type_parameters($vectort, 2)) == arrayt
-        @test @constinferred(unspecify_type_parameters($(vectort{Float64}), eltype)) == vectort
+        @test @constinferred(unspecify_type_parameters($(vectort{Float64}), eltype)) ==
+            vectort
         @test @constinferred(unspecify_type_parameters($(vectort{Float64}))) == arrayt
-        @test @constinferred(unspecify_type_parameters($(vectort{Float64}), $((eltype, 2)))) ==
+        @test @constinferred(
+            unspecify_type_parameters($(vectort{Float64}), $((eltype, 2)))
+        ) ==
             arrayt
     end
 
@@ -108,7 +110,10 @@ end
 
     struct MyBoolArray{X, Y, Z, B} <: AbstractArray{Bool, B} end
     @test_throws ErrorException TypeParameterAccessors.position(MyBoolArray, eltype)
-    @test_throws ErrorException TypeParameterAccessors.position(MyBoolArray{1, 2, 3, 4}, eltype)
+    @test_throws ErrorException TypeParameterAccessors.position(
+        MyBoolArray{1, 2, 3, 4},
+        eltype
+    )
     @test @constinferred(TypeParameterAccessors.position(MyBoolArray, ndims)) == Position(4)
     @test @constinferred(TypeParameterAccessors.position(MyBoolArray{1, 2, 3, 4}, ndims)) ==
         Position(4)

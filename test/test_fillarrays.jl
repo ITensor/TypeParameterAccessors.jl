@@ -1,9 +1,8 @@
+using FillArrays: Fill, Ones, Zeros
 using Test: @testset
 using TestExtras: @constinferred
-
 using TypeParameterAccessors:
-    type_parameters, set_type_parameters, set_default_type_parameters
-using FillArrays: Fill, Zeros, Ones
+    set_default_type_parameters, set_type_parameters, type_parameters
 
 @testset "Fill" begin
     a = Fill(1, 2, 2)

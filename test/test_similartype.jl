@@ -7,7 +7,8 @@ using TypeParameterAccessors: NDims, similartype
 @testset "TypeParameterAccessors similartype" begin
     # similartype(a, elt, ax)
     @test similartype(Array, Float32, Base.OneTo.((2, 2))) === Matrix{Float32}
-    @test similartype(Array, Type{Float32}, NTuple{3, Base.OneTo{Int}}) === Array{Float32, 3}
+    @test similartype(Array, Type{Float32}, NTuple{3, Base.OneTo{Int}}) ===
+        Array{Float32, 3}
     @test similartype(randn(3, 3, 3), Float32, Base.OneTo.((2, 2))) === Matrix{Float32}
 
     # similartype(a, elt, sz)
@@ -48,7 +49,8 @@ using TypeParameterAccessors: NDims, similartype
     @test similartype(Adjoint{Float32, Matrix{Float32}}, Float64) === Matrix{Float64}
 
     # Diagonal
-    @test similartype(Diagonal{Float32, Vector{Float32}}) === Diagonal{Float32, Vector{Float32}}
+    @test similartype(Diagonal{Float32, Vector{Float32}}) ===
+        Diagonal{Float32, Vector{Float32}}
     @test similartype(Diagonal{Float32, Vector{Float32}}, Float64) ===
         Diagonal{Float64, Vector{Float64}}
     @test_throws ErrorException similartype(Diagonal{Float32, Vector{Float32}}, (2, 2, 2))
@@ -67,7 +69,8 @@ using TypeParameterAccessors: NDims, similartype
     if VERSION < v"1.11-"
         @test similartype(BitArray, Float32, (2, 2, 2)) === Array{Float32, 3}
     else
-        @test @constinferred(similartype(BitArray, Float32, (2, 2, 2))) === Array{Float32, 3}
+        @test @constinferred(similartype(BitArray, Float32, (2, 2, 2))) ===
+            Array{Float32, 3}
     end
     @test @constinferred(similartype(BitVector, Float32, (2, 2, 2))) === Array{Float32, 3}
     @test_throws ErrorException similartype(BitArray)

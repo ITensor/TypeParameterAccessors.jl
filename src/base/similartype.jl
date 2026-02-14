@@ -1,6 +1,6 @@
 function check_similartype_output(type::Type)
     isconcretetype(type) || error(
-        "`similartype` output `$type`, which is not concrete. The corresponding call to `similar` may not be defined or may not be type stable.",
+        "`similartype` output `$type`, which is not concrete. The corresponding call to `similar` may not be defined or may not be type stable."
     )
     return type
 end

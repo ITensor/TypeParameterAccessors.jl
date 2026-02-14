@@ -110,7 +110,8 @@ end
 @inline get_type_parameters(::Type{T}, pos) where {T} = get_type_parameters(
     T, position(T, pos)
 )
-@inline get_type_parameters(::Type{T}, ::Position{p}) where {T, p} = get_type_parameters(T)[p]
+@inline get_type_parameters(::Type{T}, ::Position{p}) where {T, p} =
+    get_type_parameters(T)[p]
 @inline get_type_parameters(::Type{T}, ::Position{0}) where {T} = T
 @inline get_type_parameters(::Type{T}, pos::Tuple) where {T} = get_type_parameters.(T, pos)
 @inline get_type_parameters(object, pos) = get_type_parameters(typeof(object), pos)
@@ -152,7 +153,7 @@ nparameters(object) = nparameters(typeof(object))
 nparameters(::Type{T}) where {T} = length(get_type_parameters(T))
 
 """
-  is_parameter_specified(type::Type, pos)
+is_parameter_specified(type::Type, pos)
 
 Return whether or not the type parameter at a given position is considered specified.
 """
@@ -291,15 +292,16 @@ struct UndefinedDefaultTypeParameter end
         if !(supertype_param isa TypeVar)
             continue
         end
-        param_position = findfirst(param -> (param.name == supertype_param.name), type_params)
+        param_position =
+            findfirst(param -> (param.name == supertype_param.name), type_params)
         defaults[param_position] = supertype_default_type_param
     end
     return :(@inline; $(Tuple(defaults)))
 end
 
 """
-  set_default_type_parameters(type::Type, [positions::Tuple])
-  set_default_type_parameters(type::Type, position)
+set_default_type_parameters(type::Type, [positions::Tuple])
+set_default_type_parameters(type::Type, position)
 
 Set the type parameters at the given positions to their default values.
 """
