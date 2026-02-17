@@ -1,6 +1,6 @@
 name = "TypeParameterAccessors"
 uuid = "7e5a90cf-f82e-492e-a09b-e3e26432c138"
-version = "0.4.8"
+version = "0.4.7"
 authors = ["ITensor developers <support@itensor.org> and contributors"]
 
 [deps]
