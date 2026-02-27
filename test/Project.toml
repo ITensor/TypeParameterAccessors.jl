@@ -1,3 +1,4 @@
+
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
@@ -9,6 +10,10 @@ Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestExtras = "5ed8adda-3752-4e41-b88a-e8b09835ee3a"
 TypeParameterAccessors = "7e5a90cf-f82e-492e-a09b-e3e26432c138"
+
+
+[sources.TypeParameterAccessors]
+path = ".."
 
 [compat]
 Aqua = "0.8.9"
