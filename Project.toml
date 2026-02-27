@@ -1,7 +1,10 @@
 name = "TypeParameterAccessors"
 uuid = "7e5a90cf-f82e-492e-a09b-e3e26432c138"
-version = "0.4.18"
+version = "0.4.19"
 authors = ["ITensor developers <support@itensor.org> and contributors"]
+
+[workspace]
+projects = ["benchmark", "dev", "docs", "examples", "test"]
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
