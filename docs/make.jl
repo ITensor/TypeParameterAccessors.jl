@@ -1,11 +1,12 @@
 using Documenter: Documenter, DocMeta, deploydocs, makedocs
+using ITensorFormatter: ITensorFormatter
 using TypeParameterAccessors: TypeParameterAccessors
 
 DocMeta.setdocmeta!(
     TypeParameterAccessors, :DocTestSetup, :(using TypeParameterAccessors); recursive = true
 )
 
-include("make_index.jl")
+ITensorFormatter.make_index!(pkgdir(TypeParameterAccessors))
 
 makedocs(;
     modules = [TypeParameterAccessors],
